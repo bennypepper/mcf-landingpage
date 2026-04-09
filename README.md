@@ -1,59 +1,72 @@
 # Ma Chung Festival Landing Page
 
-Website statis multi-halaman untuk Ma Chung Festival (MCF), dibuat dengan HTML + Bootstrap via CDN.
+## Konteks Proyek
 
-## Ringkasan Proyek
+Proyek ini merupakan tugas mata kuliah Pemrograman Web untuk membuat landing page event kampus menggunakan Bootstrap.
 
-Proyek ini berisi landing page dan halaman pendukung untuk memperkenalkan event Ma Chung Festival:
+Event kampus yang dipilih oleh kelompok kami adalah **Ma Chung Festival (MCF)**.
 
-- Halaman utama (home) festival
-- Halaman profil festival
-- Halaman daftar event
-- Halaman testimoni
-- Halaman kontak
+Saat ini website masih berupa versi static (front-end saja), dan akan dikembangkan ke tahap berikutnya agar fungsional dengan backend menggunakan PHP.
+
+## Tujuan Proyek
+
+- Menyediakan landing page informatif untuk Ma Chung Festival.
+- Menampilkan informasi utama event dalam beberapa halaman.
+- Menjadi fondasi untuk pengembangan sistem berbasis PHP pada tahap lanjutan.
+
+## Fitur Halaman
+
+- `index.html`: halaman utama (hero + ringkasan festival)
+- `about.html`: profil dan keunggulan Ma Chung Festival
+- `events.html`: daftar rangkaian event MCF
+- `testimonials.html`: testimoni peserta/orang tua
+- `contact.html`: informasi kontak dan form pesan
 
 ## Tech Stack
 
 - HTML5
-- CSS (ditulis di dalam tag `<style>` per halaman)
+- CSS (inline di masing-masing file)
 - Bootstrap 5.3 (CDN)
 - Bootstrap Icons (CDN)
-- JavaScript Bootstrap Bundle (CDN)
-
-## Struktur File
-
-- `index.html` -> Halaman utama
-- `about.html` -> Informasi tentang festival
-- `events.html` -> Daftar event MCF
-- `testimonials.html` -> Testimoni peserta/orang tua
-- `contact.html` -> Informasi kontak + form pesan
-- `README.md` -> Dokumentasi ringkas proyek
-- `GUIDE.md` -> Panduan lengkap untuk pengembangan pemula
+- Bootstrap Bundle JS (CDN)
 
 ## Cara Menjalankan
 
-Karena ini proyek static HTML, Anda bisa menjalankannya dengan 2 cara:
+Karena ini proyek static HTML, website dapat dijalankan dengan:
 
-1. Buka langsung file `index.html` di browser.
-2. (Disarankan) Jalankan local server agar testing lebih realistis.
+1. Membuka `index.html` langsung di browser.
+2. Menjalankan local server (disarankan), misalnya dengan VS Code Live Server.
 
-Contoh cepat dengan VS Code Live Server:
+Langkah cepat dengan Live Server:
 
-1. Install extension "Live Server".
+1. Install extension "Live Server" di VS Code.
 2. Klik kanan `index.html`.
 3. Pilih "Open with Live Server".
 
-## Catatan Penting
+## Struktur File
 
-- Navbar dan footer ditulis ulang di setiap halaman (belum menggunakan template/include), jadi perubahan menu harus disinkronkan manual ke semua file HTML.
-- Data masih bersifat statis (belum terhubung backend/database).
-- Form pada `contact.html` masih tampilan UI dan belum mengirim data.
+- `index.html`
+- `about.html`
+- `events.html`
+- `testimonials.html`
+- `contact.html`
+- `README.md`
+- `GUIDE.md`
 
-## Panduan Pengembangan
+## Catatan Pengembangan
 
-Lihat `GUIDE.md` untuk panduan lengkap:
+- Komponen navbar dan footer saat ini ditulis di setiap halaman, sehingga perubahan harus disinkronkan manual.
+- Form pada `contact.html` masih sebatas UI dan belum terhubung ke backend.
+- Tahap berikutnya: integrasi backend PHP untuk proses data (misalnya form kontak, data event dinamis, dan manajemen konten).
 
-- Penjelasan struktur kode per halaman
-- Cara mengubah teks, event, testimoni, dan kontak
-- Tips menjaga konsistensi antar halaman
-- Ide pengembangan lanjutan untuk pemula
+## Anggota Kelompok
+
+- Alexandra Jennifer Matahurila / 312310004
+- Benedict Michael Pepper / 312310007
+- Elizabeth Anndini Shayna Putri / 312310014
+- Elroi Yonatan Raharjo / 312310015
+- James William Ongkodjojo / 312310021
+
+## Panduan Tambahan
+
+Lihat `GUIDE.md` untuk panduan detail pengembangan proyek bagi pemula.
