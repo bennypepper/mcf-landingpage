@@ -16,8 +16,16 @@
     .event-card { border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; height: 100%; }
     .event-img {
       background: #d0ddf5;
-      height: 160px;
+      width: 100%;
+      height: 270px;
+      overflow: hidden;
       display: flex; align-items: center; justify-content: center;
+    }
+    .event-img img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
     }
     .event-body { padding: 16px; }
     .event-date { font-size: 0.8rem; color: #6c757d; }
@@ -29,8 +37,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
   <div class="container">
     <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-      <i class="bi bi-circle-half fs-4 text-primary"></i>
-      <span class="fw-semibold">Ma Chung Festival</span>
+      <img src="Foto_MCF/MCF_2025_Utama.png" alt="Icon MCF" width="30" height="30">
+      <img src="Foto_MCF/Logo MCF.png" alt="Logo MCF" height="30">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -50,7 +58,7 @@
 <section class="page-header">
   <div class="container text-center">
     <h1 class="fw-bold">Main Events</h1>
-    <p class="lead mb-0">Rangkaian program dan tahapan orientasi mahasiswa baru</p>
+    <p class="lead mb-0">Rangkaian kegiatan dalam Ma Chung Festival 2026</p>
   </div>
 </section>
 
@@ -60,99 +68,131 @@
 
       <div class="col-md-4">
         <div class="event-card">
-          <div class="event-img"><i class="bi bi-people text-secondary fs-1"></i></div>
+          <div class="event-img">
+            <img src="Foto_MCF/parentsday.JPG" alt="Foto Parent's Day">
+          </div>
           <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>15 Feb 2026</p>
+            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>14 Agustus 2025</p>
             <h6 class="fw-bold">Parent's Day</h6>
-            <p class="text-muted small mb-0">Sesi khusus bagi orang tua mahasiswa baru untuk memahami lingkungan universitas, sistem perkuliahan, dan fasilitas yang tersedia.</p>
+            <p class="text-muted small mb-0">Momen istimewa di mana Universitas Ma Chung menyambut
+              para orang tua mahasiswa baru untuk mengenal lebih dekat lingkungan kampus tempat
+              anak-anak mereka akan bertumbuh dan berproses.
+            </p>
           </div>
         </div>
       </div>
 
       <div class="col-md-4">
         <div class="event-card">
-          <div class="event-img"><i class="bi bi-book text-secondary fs-1"></i></div>
+          <div class="event-img">
+            <img src="Foto_MCF/department_fair.JPG" alt="Foto Department Fair">
+          </div>
           <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>20 Feb 2026</p>
+            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>14 Agustus 2025</p>
             <h6 class="fw-bold">Department Fair</h6>
-            <p class="text-muted small mb-0">Sesi pengenalan prodi bagi mahasiswa baru untuk berinteraksi dengan dosen serta para senior jurusan demi mempermudah masa perkuliahan.</p>
+            <p class="text-muted small mb-0">Para peserta akan diajak menjelajahi berbagai program studi di
+              Universitas Ma Chung, mengenal lebih dalam bidang yang diminati, berbincang langsung dengan dosen
+              dan mahasiswa, hingga melihat karya dan inovasi yang lahir dari setiap program studi.
+            </p>
           </div>
         </div>
       </div>
 
       <div class="col-md-4">
         <div class="event-card">
-          <div class="event-img"><i class="bi bi-shield-check text-secondary fs-1"></i></div>
+          <div class="event-img"><img src="Foto_MCF/17_an.JPG" alt="Foto 17-an"></div>
           <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>22 Feb 2026</p>
-            <h6 class="fw-bold">Krida</h6>
-            <p class="text-muted small mb-0">Program pembinaan disiplin dan karakter yang menekankan team-building agar mahasiswa mampu menjalin komunikasi lintas jurusan.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="event-card">
-          <div class="event-img"><i class="bi bi-compass text-secondary fs-1"></i></div>
-          <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>25 Feb 2026</p>
-            <h6 class="fw-bold">Ma Chung Race</h6>
-            <p class="text-muted small mb-0">Campus tour interaktif dan rally di mana mahasiswa baru berlomba menyelesaikan berbagai pos penugasan seru tentang kampusnya.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="event-card">
-          <div class="event-img"><i class="bi bi-image text-secondary fs-1"></i></div>
-          <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>27 Feb 2026</p>
+            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>15 Agustus 2025</p>
             <h6 class="fw-bold">17-an</h6>
-            <p class="text-muted small mb-0">Perlombaan tradisional dan perayaan kebersamaan dalam suasana nasionalisme yang meriah dan penuh semangat.</p>
+            <p class="text-muted small mb-0">Acara ini menjadi momen spesial bagi seluruh civitas Ma Chung untuk merayakan
+              semangat kemerdekaan melalui kegiatan yang mempererat rasa persatuan dan kekeluargaan.
+            </p>
           </div>
         </div>
       </div>
 
       <div class="col-md-4">
         <div class="event-card">
-          <div class="event-img"><i class="bi bi-image text-secondary fs-1"></i></div>
+          <div class="event-img">
+            <img src="Foto_MCF/krida.JPG" alt="Foto Krida">
+          </div>
           <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>1 Mar 2026</p>
-            <h6 class="fw-bold">LK Days</h6>
-            <p class="text-muted small mb-0">Hari Lembaga Kemahasiswaan: showcase kegiatan UKM dan organisasi mahasiswa kepada seluruh warga kampus.</p>
+            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>16 Agustus 2025</p>
+            <h6 class="fw-bold">Krida</h6>
+            <p class="text-muted small mb-0">Melalui kegiatan Krida: "Menolak Kekerasan, Merawat Perbedaan:
+              Membangun Ruang Aman dari Kekerasan Seksual dan Intoleransi", seluruh peserta diajak untuk memahami
+              pentingnya rasa aman, saling menghargai, serta memperkuat budaya inklusif di lingkungan kampus.
+            </p>
           </div>
         </div>
       </div>
 
       <div class="col-md-4">
         <div class="event-card">
-          <div class="event-img"><i class="bi bi-image text-secondary fs-1"></i></div>
+          <div class="event-img">
+            <img src="Foto_MCF/mcr.JPG" alt="Foto Ma Chung Race">
+          </div>
           <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>3 Mar 2026</p>
-            <h6 class="fw-bold">OBOR</h6>
-            <p class="text-muted small mb-0">Olimpiade bisnis dan riset mahasiswa untuk mendorong jiwa wirausaha dan kemampuan analisis mahasiswa.</p>
+            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>16 Agustus 2025</p>
+            <h6 class="fw-bold">Ma Chung Race</h6>
+            <p class="text-muted small mb-0">Ma Chung Race menghadirkan pengalaman seru dan interakrif untuk mengenal
+              berbagai unit dan komunitas di Universitas Ma Chung dengan aktivitas berkeliling. 
+            </p>
           </div>
         </div>
       </div>
 
       <div class="col-md-4">
         <div class="event-card">
-          <div class="event-img"><i class="bi bi-image text-secondary fs-1"></i></div>
+          <div class="event-img"><img src="Foto_MCF/study_skills.JPG" alt="Foto Study Skills"></div>
           <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>5 Mar 2026</p>
+            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>17 Agustus 2025</p>
             <h6 class="fw-bold">Study Skills</h6>
-            <p class="text-muted small mb-0">Workshop dan seminar pengembangan kemampuan belajar efektif bagi seluruh mahasiswa Universitas Ma Chung.</p>
+            <p class="text-muted small mb-0">Study Skills membekali mahasiswa mengenai MAC IS, email kampus, dan berbagai software
+              pendukung pembelajaran, memastikan kesiapan mereka untuk memasuki dunia perkuliahan.
+            </p>
           </div>
         </div>
       </div>
 
       <div class="col-md-4">
         <div class="event-card">
-          <div class="event-img"><i class="bi bi-image text-secondary fs-1"></i></div>
+          <div class="event-img">
+            <img src="Foto_MCF/OBOR.JPG" alt="Foto OBOR">
+          </div>
           <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>8 Mar 2026</p>
+            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>19 Agustus 2025</p>
+            <h6 class="fw-bold">OBOR</h6>
+            <p class="text-muted small mb-0">Melalui OBOR (Orientation Based on Reflection), peserta diajak merefleksikan diri dan 
+              memahami nilai-nilai karakter yang menjadi fondasi perjalanan mereka sebagai bagian dari keluarga besar Ma Chung.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="event-card">
+          <div class="event-img">
+            <img src="Foto_MCF/LK_days.JPG" alt="Foto LK Days">
+          </div>
+          <div class="event-body">
+            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>21 Agustus 2025</p>
+            <h6 class="fw-bold">LK Days</h6>
+            <p class="text-muted small mb-0">LK Days adalah hari dimana mahasiswa baru diperkenalkan dengan berbagai lembaga
+              kemahasiswaan di Universitas Ma Chung, ruang untuk berorganisasi, berkarya, dan mengembangkan potensi di luar kelas.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="event-card">
+          <div class="event-img"><img src="Foto_MCF/inaugurasi.JPG" alt="Foto Inaugurasi"></div>
+          <div class="event-body">
+            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>22 Februari 2026</p>
             <h6 class="fw-bold">Inaugurasi</h6>
-            <p class="text-muted small mb-0">Malam puncak Ma Chung Festival: pelantikan pengurus baru, penghargaan, dan penutupan festival secara resmi.</p>
+            <p class="text-muted small mb-0">Malam puncak Ma Chung Festiva yang menghadirkan penampilan penuh bakat dari mahasiswa baru
+              hingga aksi panggung guest star yang memukau.</p>
           </div>
         </div>
       </div>
