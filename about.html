@@ -9,9 +9,26 @@
   <style>
     body { font-family: 'Segoe UI', sans-serif; }
     .page-header {
-      background: linear-gradient(135deg, #1a3c6e 0%, #2d6abf 100%);
-      color: white;
-      padding: 60px 0;
+      min-height: 500px; /* Buat lebih tinggi agar lebih megah */
+      background: linear-gradient(rgba(26, 60, 110, 0.8), rgba(45, 106, 191, 0.9)), 
+                  url('assets/bg-pattern.png'); /* Opsional: tambah pattern */
+      background-size: cover;
+    }
+
+    .text-gradient {
+      background: linear-gradient(to right, #ffffff, #a5c9ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .badge {
+      letter-spacing: 2px;
+      font-size: 0.75rem;
+    }
+
+    h1 {
+      line-height: 1.2;
+      letter-spacing: -1px;
     }
 
     .feature-card {
@@ -94,10 +111,17 @@
   </div>
 </nav>
 
-<section class="page-header">
+<section class="page-header d-flex align-items-center">
   <div class="container text-center">
-    <h1 class="fw-bold">Discover Ma Chung Festival <br> Langkah Awal Menuju Masa Depan</h1>
-    <p class="lead mb-0">Lebih dari sekadar orientasi, Ma Chung Festival hadir sebagai ruang kolaborasi <br> untuk membentuk karakter, inovasi, dan prestasi sejak hari pertama.</p>
+    <span class="badge rounded-pill bg-light text-primary px-3 py-2 mb-3 fw-bold shadow-sm">EST. 2007</span>
+    <h1 class="display-4 fw-bold mb-3">Discover Ma Chung Festival <br> <span class="text-gradient">Langkah Awal Menuju Masa Depan</span></h1>
+    <p class="lead opacity-75 mx-auto" style="max-width: 700px;">
+      Lebih dari sekadar orientasi, Ma Chung Festival hadir sebagai ruang kolaborasi 
+      untuk membentuk karakter, inovasi, dan prestasi sejak hari pertama.
+    </p>
+    <div class="mt-4">
+       <a href="#about" class="btn btn-light btn-lg px-4 shadow-sm fw-bold">Pelajari Lebih Lanjut</a>
+    </div>
   </div>
 </section>
 
