@@ -13,13 +13,30 @@
       color: white;
       padding: 60px 0;
     }
-    .feature-card { border: 1px solid #e0e0e0; border-radius: 12px; padding: 24px; height: 100%; }
-    .feature-icon {
-      background: #eef2ff;
-      width: 48px; height: 48px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 16px;
+
+    .feature-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: white; /* Pastikan background card putih */
+    }
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+    }
+
+    .feature-image {
+      height: 220px;
+      object-fit: cover;
+      object-position: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    .card-body h5 {
+      font-size: 1.2rem;
+      color: #1a3c6e;
+    }
+
+    .card-body p {
+      line-height: 1.6;
     }
     .stat-box { background: #f0f4ff; border-radius: 12px; padding: 24px; text-align: center; }
     footer { background: #f8f9fa; border-top: 1px solid #dee2e6; }
