@@ -69,4 +69,4 @@ Langkah cepat dengan Live Server:
 
 ## Panduan Tambahan
 
-Lihat `GUIDE.md` untuk panduan detail pengembangan proyek bagi pemula.
+Lihat `GUIDE.md` untuk panduan detail pengembangan proyek.

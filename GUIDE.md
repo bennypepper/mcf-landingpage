@@ -165,7 +165,7 @@ Untuk naik level dari versi sekarang, tim bisa lanjut ke:
 4. Tambahkan gambar event asli menggantikan icon placeholder.
 5. Tambahkan SEO dasar (meta description, Open Graph).
 
-## 9. Catatan Untuk Tim Pemula
+## 9. Catatan 
 
 - Fokus dulu pada konsistensi konten dan struktur HTML.
 - Jangan buru-buru pakai framework sebelum paham alur HTML + CSS dasar.
