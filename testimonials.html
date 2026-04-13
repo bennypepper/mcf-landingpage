@@ -6,6 +6,7 @@
   <title>Testimonials - Ma Chung Festival</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
   <style>
     body { font-family: 'Segoe UI', sans-serif; }
     .page-header {
@@ -13,7 +14,7 @@
       color: white;
       padding: 60px 0;
     }
-    .testi-card {
+    /* .testi-card {
       border: 1px solid #e0e0e0;
       border-radius: 12px;
       padding: 28px;
@@ -23,19 +24,27 @@
       width: 56px; height: 56px;
       background: #eef2ff;
       border-radius: 50%;
+    } */
+    .event-card { border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; height: 100%; }
+    .event-img {
+      background: #d0ddf5;
+      height: 160px;
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 16px;
     }
+    .event-body { padding: 16px; }
+    .event-date { font-size: 0.8rem; color: #6c757d; }
     footer { background: #f8f9fa; border-top: 1px solid #dee2e6; }
   </style>
+  
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
   <div class="container">
     <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-      <i class="bi bi-circle-half fs-4 text-primary"></i>
-      <span class="fw-semibold">Ma Chung Festival</span>
+      <img src="media/logo1.png" style="height: 40px;" alt="logo1">
+      <img src="media/logo2.png" style="height: 40px;" alt="logo2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -63,15 +72,95 @@
   <div class="container">
     <div class="row g-4">
 
-      <div class="col-md-6">
-        <div class="testi-card text-center">
-          <div class="avatar-circle"><i class="bi bi-person text-primary fs-4"></i></div>
-          <p class="text-muted fst-italic">"Ma Chung Festival sangat membantu saya saat pertama kali masuk kuliah. Berkat kegiatan ini, saya bisa langsung beradaptasi dan punya banyak teman dari prodi lain."</p>
-          <p class="fw-bold mb-0">Jennifer</p>
-          <p class="text-muted small">Mahasiswa Teknik Informatika (Peserta MCF 2025)</p>
-        </div>
-      </div>
-
+      <table>
+        <tr class="align-top">
+          <td>
+            <div class="container mt-3">
+              <div class="card" style="width:400px">
+                <img class="card-img-top" src="media/testi1.png" alt="Card image" style="width:100%;">
+                <div class="card-body">
+                  <p class="card-text" style="text-align: justify"><i>"Momen paling berkesan selama MCF 2025 itu waktu aku sama temen temen semua berkumpul untuk mengikuti rangkaian kegiatan yang sangat
+                    padat namun penuh makna bersama teman-teman baru. Melalui acara ini, saya belajar banyak tentang nilai kebersamaan, kedisiplinan, serta bagaimana cara
+                    beradaptasi dengan lingkungan kampus yang dinamis secara lebih efektif. Selain itu, MCF juga memberikan manfaat besar dalam memperluas relasi dan melatih
+                    kerja sama tim yang sangat berguna untuk menunjang perjalanan akademik ke depannya. MCF 2025, gacorr sihh"</i></p>
+                  <h4 class="card-title">Devista Eka Maulidiah</h4>
+                  <p class="card-text">Mahasiswa Farmasi 2025</p>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="container mt-3">
+              <div class="card" style="width:400px">
+                <img class="card-img-top" src="media/testi2.png" alt="Card image" style="width:100%;">
+                <div class="card-body" style="text-align: justify">
+                  <p class="card-text"><i>"Meskipun awalnya aku masuk Ma Chung bukan karena kemauan sendiri, pengalaman selama Ma Chung Festival bener-bener ngerubah segalanya
+                    karena vibes acaranya yang seru dan fresh banget! Aku dapet mentor yang sangat helpful dan telaten membimbing, ditambah lagi kakak-kakak panitianya yang
+                    kompak dan ramah banget, bikin proses adaptasi jadi nggak berasa beban. Kesan yang aku dapet bener-bener positif, apalagi bisa ketemu temen-temen baru
+                    yang satu frekuensi dan asik-asik, sampai akhirnya aku ngerasa kalau Ma Chung ternyata punya impresi yang sekeren itu!"</i></p>
+                  <h4 class="card-title">Abigail Chandra</h4>
+                  <p>Mahasiswa Teknik Informatika 2025</p>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="container mt-3">
+              <div class="card" style="width:400px">
+                <img class="card-img-top" src="media/testi3.png" alt="Card image" style="width:100%;">
+                <div class="card-body">
+                  <p class="card-text" style="text-align: justify"><i>"Momen paling berkesan saya adalah first impression saya terhadap mentor-mentor MCF bisa benar-benar menunjukkan citra yang sesuai
+                    dengan standard Ma Chung / 12 Nilai Ma Chung."</i></p>
+                  <h4 class="card-title">Stevina Fransisca</h4>
+                  <p>Mahasiswa Manajemen 2025</p>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr class="align-top">
+          <td>
+            <div class="container mt-3">
+              <div class="card" style="width:400px">
+                <img class="card-img-top" src="media/testi1.png" alt="Card image" style="width:100%;">
+                <div class="card-body">
+                  <p class="card-text" style="text-align: justify;"><i>"Momen paling berkesan saya adalah first impression saya terhadap mentor-mentor MCF bisa benar-benar menunjukkan citra yang sesuai
+                    dengan standard Ma Chung / 12 Nilai Ma Chung."</i></p>
+                  <h4 class="card-title">Stevina Fransisca</h4>
+                  <p>Mahasiswa Manajemen 2025</p>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="container mt-3">
+              <div class="card" style="width:400px">
+                <img class="card-img-top" src="media/testi2.png" alt="Card image" style="width:100%;">
+                <div class="card-body">
+                  <p class="card-text" style="text-align: justify;"><i>"Momen paling berkesan saya adalah first impression saya terhadap mentor-mentor MCF bisa benar-benar menunjukkan citra yang sesuai
+                    dengan standard Ma Chung / 12 Nilai Ma Chung."</i></p>
+                  <h4 class="card-title">Stevina Fransisca</h4>
+                  <p>Mahasiswa Manajemen 2025</p>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="container mt-3">
+              <div class="card" style="width:400px">
+                <img class="card-img-top" src="media/testi3.png" alt="Card image" style="width:100%;">
+                <div class="card-body">
+                  <p class="card-text" style="text-align: justify;"><i>"Momen paling berkesan saya adalah first impression saya terhadap mentor-mentor MCF bisa benar-benar menunjukkan citra yang sesuai
+                    dengan standard Ma Chung / 12 Nilai Ma Chung."</i></p>
+                  <h4 class="card-title">Stevina Fransisca</h4>
+                  <p>Mahasiswa Manajemen 2025</p>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+      
       <div class="col-md-6">
         <div class="testi-card text-center">
           <div class="avatar-circle"><i class="bi bi-person text-primary fs-4"></i></div>
