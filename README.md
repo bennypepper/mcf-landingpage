@@ -67,6 +67,3 @@ Langkah cepat dengan Live Server:
 - Elroi Yonatan Raharjo / 312310015
 - James William Ongkodjojo / 312310021
 
-## Panduan Tambahan
-
-Lihat `GUIDE.md` untuk panduan detail pengembangan proyek.
