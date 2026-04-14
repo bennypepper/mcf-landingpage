@@ -8,27 +8,144 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <style>
     body { font-family: 'Segoe UI', sans-serif; }
+
     .page-header {
       background: linear-gradient(135deg, #1a3c6e 0%, #2d6abf 100%);
       color: white;
       padding: 60px 0;
     }
-    .event-card { border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; height: 100%; }
-    .event-img {
-      background: #d0ddf5;
-      width: 100%;
-      height: 270px;
-      overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
+
+    /* === TIMELINE === */
+    .timeline-wrapper {
+      position: relative;
+      padding: 40px 0 10px;
     }
-    .event-img img{
+    /* Center vertical line */
+    .timeline-wrapper::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, transparent, #2d6abf 8%, #1a3c6e 92%, transparent);
+      transform: translateX(-50%);
+    }
+
+    .tl-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 64px;
+      position: relative;
+    }
+    /* Left side (image or content depending on parity) */
+    .tl-side {
+      width: calc(50% - 32px);
+    }
+    .tl-side-left { padding-right: 28px; }
+    .tl-side-right { padding-left: 28px; }
+
+    /* Dot in center */
+    .tl-dot-wrapper {
+      width: 64px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .tl-dot {
+      width: 22px;
+      height: 22px;
+      background: #2d6abf;
+      border-radius: 50%;
+      border: 4px solid white;
+      box-shadow: 0 0 0 3px #2d6abf;
+    }
+
+    /* Image block */
+    .tl-image {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(26,60,110,0.12);
+    }
+    .tl-image img {
       width: 100%;
-      height: 100%;
+      height: 250px;
       object-fit: cover;
       object-position: center;
+      display: block;
+      transition: transform 0.4s ease;
     }
-    .event-body { padding: 16px; }
-    .event-date { font-size: 0.8rem; color: #6c757d; }
+    .tl-image:hover img { transform: scale(1.05); }
+
+    /* Content card */
+    .tl-content {
+      background: white;
+      border: 1px solid #e8eef8;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      height: 100%;
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+    .tl-content:hover {
+      box-shadow: 0 12px 36px rgba(26,60,110,0.1);
+      transform: translateY(-3px);
+    }
+    .tl-date {
+      font-size: 0.76rem;
+      color: #6c757d;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    /* Right-align date when content is on left side */
+    .tl-side-left .tl-date { justify-content: flex-end; }
+    .tl-side-left .tl-content { text-align: right; }
+
+    .tl-content h4 {
+      font-weight: 700;
+      color: #1a3c6e;
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+    }
+    .tl-content p {
+      color: #6c757d;
+      font-size: 0.88rem;
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    /* === MOBILE RESPONSIVE === */
+    @media (max-width: 767px) {
+      .timeline-wrapper::before {
+        left: 20px;
+        transform: none;
+      }
+      .tl-item {
+        flex-direction: column !important;
+        align-items: flex-start;
+        padding-left: 56px;
+        margin-bottom: 48px;
+      }
+      .tl-side, .tl-side-left, .tl-side-right {
+        width: 100%;
+        padding: 0;
+        text-align: left !important;
+      }
+      .tl-side + .tl-side { margin-top: 16px; }
+      .tl-dot-wrapper {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 42px;
+      }
+      .tl-side-left .tl-date { justify-content: flex-start; }
+    }
+
     footer { background: #f8f9fa; border-top: 1px solid #dee2e6; }
   </style>
 </head>
@@ -58,141 +175,163 @@
 <section class="page-header">
   <div class="container text-center">
     <h1 class="fw-bold">Main Events</h1>
-    <p class="lead mb-0">Rangkaian kegiatan dalam Ma Chung Festival 2026</p>
+    <p class="lead mb-0">Rangkaian kegiatan dalam Ma Chung Festival 2025</p>
   </div>
 </section>
 
 <section class="py-5">
   <div class="container">
-    <div class="row g-4">
+    <div class="timeline-wrapper">
 
-      <div class="col-md-4">
-        <div class="event-card">
-          <div class="event-img">
-            <img src="assets/images/events/parentsday.webp" alt="Foto Parent's Day">
+      <!-- 1: Parent's Day — image left, content right -->
+      <div class="tl-item">
+        <div class="tl-side tl-side-left">
+          <div class="tl-image">
+            <img src="assets/images/events/parentsday.webp" alt="Parent's Day">
           </div>
-          <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>14 Agustus 2025</p>
-            <h6 class="fw-bold">Parent's Day</h6>
-            <p class="text-muted small mb-0">Momen istimewa di mana Universitas Ma Chung menyambut
-              para orang tua mahasiswa baru untuk mengenal lebih dekat lingkungan kampus tempat
-              anak-anak mereka akan bertumbuh dan berproses.
-            </p>
+        </div>
+        <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
+        <div class="tl-side tl-side-right">
+          <div class="tl-content">
+            <p class="tl-date"><i class="bi bi-calendar3"></i> 14 Agustus 2025</p>
+            <h4>Parent's Day</h4>
+            <p>Momen istimewa di mana Universitas Ma Chung menyambut para orang tua mahasiswa baru untuk mengenal lebih dekat lingkungan kampus tempat anak-anak mereka akan bertumbuh dan berproses.</p>
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="event-card">
-          <div class="event-img">
-            <img src="assets/images/events/department_fair.webp" alt="Foto Department Fair">
+      <!-- 2: Department Fair — content left, image right -->
+      <div class="tl-item">
+        <div class="tl-side tl-side-left">
+          <div class="tl-content">
+            <p class="tl-date"><i class="bi bi-calendar3"></i> 14 Agustus 2025</p>
+            <h4>Department Fair</h4>
+            <p>Para peserta akan diajak menjelajahi berbagai program studi di Universitas Ma Chung, mengenal lebih dalam bidang yang diminati, berbincang langsung dengan dosen dan mahasiswa, hingga melihat karya dan inovasi yang lahir dari setiap program studi.</p>
           </div>
-          <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>14 Agustus 2025</p>
-            <h6 class="fw-bold">Department Fair</h6>
-            <p class="text-muted small mb-0">Para peserta akan diajak menjelajahi berbagai program studi di
-              Universitas Ma Chung, mengenal lebih dalam bidang yang diminati, berbincang langsung dengan dosen
-              dan mahasiswa, hingga melihat karya dan inovasi yang lahir dari setiap program studi.
-            </p>
+        </div>
+        <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
+        <div class="tl-side tl-side-right">
+          <div class="tl-image">
+            <img src="assets/images/events/department_fair.webp" alt="Department Fair">
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="event-card">
-          <div class="event-img"><img src="assets/images/events/17_an.webp" alt="Foto 17-an"></div>
-          <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>15 Agustus 2025</p>
-            <h6 class="fw-bold">17-an</h6>
-            <p class="text-muted small mb-0">Acara ini menjadi momen spesial bagi seluruh civitas Ma Chung untuk merayakan
-              semangat kemerdekaan melalui kegiatan yang mempererat rasa persatuan dan kekeluargaan.
-            </p>
+      <!-- 3: 17-an — image left, content right -->
+      <div class="tl-item">
+        <div class="tl-side tl-side-left">
+          <div class="tl-image">
+            <img src="assets/images/events/17_an.webp" alt="17-an">
+          </div>
+        </div>
+        <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
+        <div class="tl-side tl-side-right">
+          <div class="tl-content">
+            <p class="tl-date"><i class="bi bi-calendar3"></i> 15 Agustus 2025</p>
+            <h4>17-an</h4>
+            <p>Acara ini menjadi momen spesial bagi seluruh civitas Ma Chung untuk merayakan semangat kemerdekaan melalui kegiatan yang mempererat rasa persatuan dan kekeluargaan.</p>
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="event-card">
-          <div class="event-img">
-            <img src="assets/images/events/krida.webp" alt="Foto Krida">
+      <!-- 4: Krida — content left, image right -->
+      <div class="tl-item">
+        <div class="tl-side tl-side-left">
+          <div class="tl-content">
+            <p class="tl-date"><i class="bi bi-calendar3"></i> 16 Agustus 2025</p>
+            <h4>Krida</h4>
+            <p>Melalui kegiatan Krida: "Menolak Kekerasan, Merawat Perbedaan: Membangun Ruang Aman dari Kekerasan Seksual dan Intoleransi", seluruh peserta diajak memahami pentingnya rasa aman, saling menghargai, dan memperkuat budaya inklusif di lingkungan kampus.</p>
           </div>
-          <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>16 Agustus 2025</p>
-            <h6 class="fw-bold">Krida</h6>
-            <p class="text-muted small mb-0">Melalui kegiatan Krida: "Menolak Kekerasan, Merawat Perbedaan:
-              Membangun Ruang Aman dari Kekerasan Seksual dan Intoleransi", seluruh peserta diajak untuk memahami
-              pentingnya rasa aman, saling menghargai, serta memperkuat budaya inklusif di lingkungan kampus.
-            </p>
+        </div>
+        <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
+        <div class="tl-side tl-side-right">
+          <div class="tl-image">
+            <img src="assets/images/events/krida.webp" alt="Krida">
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="event-card">
-          <div class="event-img">
-            <img src="assets/images/events/mcr.webp" alt="Foto Ma Chung Race">
+      <!-- 5: Ma Chung Race — image left, content right -->
+      <div class="tl-item">
+        <div class="tl-side tl-side-left">
+          <div class="tl-image">
+            <img src="assets/images/events/mcr.webp" alt="Ma Chung Race">
           </div>
-          <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>16 Agustus 2025</p>
-            <h6 class="fw-bold">Ma Chung Race</h6>
-            <p class="text-muted small mb-0">Ma Chung Race menghadirkan pengalaman seru dan interakrif untuk mengenal
-              berbagai unit dan komunitas di Universitas Ma Chung dengan aktivitas berkeliling. 
-            </p>
+        </div>
+        <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
+        <div class="tl-side tl-side-right">
+          <div class="tl-content">
+            <p class="tl-date"><i class="bi bi-calendar3"></i> 16 Agustus 2025</p>
+            <h4>Ma Chung Race</h4>
+            <p>Ma Chung Race menghadirkan pengalaman seru dan interaktif untuk mengenal berbagai unit dan komunitas di Universitas Ma Chung melalui aktivitas berkeliling yang menyenangkan.</p>
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="event-card">
-          <div class="event-img"><img src="assets/images/events/study_skills.webp" alt="Foto Study Skills"></div>
-          <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>17 Agustus 2025</p>
-            <h6 class="fw-bold">Study Skills</h6>
-            <p class="text-muted small mb-0">Study Skills membekali mahasiswa mengenai MAC IS, email kampus, dan berbagai software
-              pendukung pembelajaran, memastikan kesiapan mereka untuk memasuki dunia perkuliahan.
-            </p>
+      <!-- 6: Study Skills — content left, image right -->
+      <div class="tl-item">
+        <div class="tl-side tl-side-left">
+          <div class="tl-content">
+            <p class="tl-date"><i class="bi bi-calendar3"></i> 17 Agustus 2025</p>
+            <h4>Study Skills</h4>
+            <p>Study Skills membekali mahasiswa mengenai MAC IS, email kampus, dan berbagai software pendukung pembelajaran, memastikan kesiapan mereka untuk memasuki dunia perkuliahan dengan percaya diri.</p>
+          </div>
+        </div>
+        <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
+        <div class="tl-side tl-side-right">
+          <div class="tl-image">
+            <img src="assets/images/events/study_skills.webp" alt="Study Skills">
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="event-card">
-          <div class="event-img">
-            <img src="assets/images/events/obor.webp" alt="Foto OBOR">
+      <!-- 7: OBOR — image left, content right -->
+      <div class="tl-item">
+        <div class="tl-side tl-side-left">
+          <div class="tl-image">
+            <img src="assets/images/events/obor.webp" alt="OBOR">
           </div>
-          <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>19 Agustus 2025</p>
-            <h6 class="fw-bold">OBOR</h6>
-            <p class="text-muted small mb-0">Melalui OBOR (Orientation Based on Reflection), peserta diajak merefleksikan diri dan 
-              memahami nilai-nilai karakter yang menjadi fondasi perjalanan mereka sebagai bagian dari keluarga besar Ma Chung.
-            </p>
+        </div>
+        <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
+        <div class="tl-side tl-side-right">
+          <div class="tl-content">
+            <p class="tl-date"><i class="bi bi-calendar3"></i> 19 Agustus 2025</p>
+            <h4>OBOR</h4>
+            <p>Melalui OBOR (Orientation Based on Reflection), peserta diajak merefleksikan diri dan memahami nilai-nilai karakter yang menjadi fondasi perjalanan mereka sebagai bagian dari keluarga besar Ma Chung.</p>
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="event-card">
-          <div class="event-img">
-            <img src="assets/images/events/lk_days.webp" alt="Foto LK Days">
+      <!-- 8: LK Days — content left, image right -->
+      <div class="tl-item">
+        <div class="tl-side tl-side-left">
+          <div class="tl-content">
+            <p class="tl-date"><i class="bi bi-calendar3"></i> 21 Agustus 2025</p>
+            <h4>LK Days</h4>
+            <p>LK Days adalah hari dimana mahasiswa baru diperkenalkan dengan berbagai lembaga kemahasiswaan di Universitas Ma Chung — ruang untuk berorganisasi, berkarya, dan mengembangkan potensi di luar kelas.</p>
           </div>
-          <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>21 Agustus 2025</p>
-            <h6 class="fw-bold">LK Days</h6>
-            <p class="text-muted small mb-0">LK Days adalah hari dimana mahasiswa baru diperkenalkan dengan berbagai lembaga
-              kemahasiswaan di Universitas Ma Chung, ruang untuk berorganisasi, berkarya, dan mengembangkan potensi di luar kelas.
-            </p>
+        </div>
+        <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
+        <div class="tl-side tl-side-right">
+          <div class="tl-image">
+            <img src="assets/images/events/lk_days.webp" alt="LK Days">
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="event-card">
-          <div class="event-img"><img src="assets/images/events/inaugurasi.webp" alt="Foto Inaugurasi"></div>
-          <div class="event-body">
-            <p class="event-date mb-1"><i class="bi bi-calendar3 me-1"></i>22 Februari 2026</p>
-            <h6 class="fw-bold">Inaugurasi</h6>
-            <p class="text-muted small mb-0">Malam puncak Ma Chung Festiva yang menghadirkan penampilan penuh bakat dari mahasiswa baru
-              hingga aksi panggung guest star yang memukau.</p>
+      <!-- 9: Inaugurasi — image left, content right -->
+      <div class="tl-item">
+        <div class="tl-side tl-side-left">
+          <div class="tl-image">
+            <img src="assets/images/events/inaugurasi.webp" alt="Inaugurasi">
+          </div>
+        </div>
+        <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
+        <div class="tl-side tl-side-right">
+          <div class="tl-content">
+            <p class="tl-date"><i class="bi bi-calendar3"></i> 22 Februari 2026</p>
+            <h4>Inaugurasi</h4>
+            <p>Malam puncak Ma Chung Festival yang menghadirkan penampilan penuh bakat dari mahasiswa baru hingga aksi panggung guest star yang memukau — penutup yang tak terlupakan dari seluruh rangkaian MCF.</p>
           </div>
         </div>
       </div>
