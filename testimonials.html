@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    body { font-family: 'Segoe UI', sans-serif; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+    }
 
     .page-header {
       background: linear-gradient(135deg, #1a3c6e 0%, #2d6abf 100%);
@@ -21,16 +24,19 @@
       border: 1px solid #e8eef8;
       border-radius: 18px;
       padding: 32px;
-      height: 100%;
       position: relative;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
+
     .quote-card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 16px 40px rgba(26,60,110,0.12);
+      box-shadow: 0 16px 40px rgba(26, 60, 110, 0.12);
     }
+
     /* Decorative large quotation mark */
     .quote-card::before {
       content: '\201C';
@@ -51,12 +57,31 @@
       color: white;
       border: none;
     }
-    .quote-card.featured::before { color: white; opacity: 0.12; }
-    .quote-card.featured .quote-text { color: rgba(255,255,255,0.9); }
-    .quote-card.featured .quote-name { color: white; }
-    .quote-card.featured .quote-prodi { color: rgba(255,255,255,0.65); }
-    .quote-card.featured .quote-divider { background: rgba(255,255,255,0.25); }
-    .quote-card.featured .quote-avatar { border-color: rgba(255,255,255,0.3); }
+
+    .quote-card.featured::before {
+      color: white;
+      opacity: 0.12;
+    }
+
+    .quote-card.featured .quote-text {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .quote-card.featured .quote-name {
+      color: white;
+    }
+
+    .quote-card.featured .quote-prodi {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .quote-card.featured .quote-divider {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .quote-card.featured .quote-avatar {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
 
     .quote-text {
       font-style: italic;
@@ -66,8 +91,12 @@
       margin-bottom: 24px;
       position: relative;
       z-index: 1;
+      flex: 1;
     }
-    .quote-card.featured .quote-text { font-size: 0.95rem; }
+
+    .quote-card.featured .quote-text {
+      font-size: 0.95rem;
+    }
 
     .quote-divider {
       height: 1px;
@@ -80,6 +109,7 @@
       align-items: center;
       gap: 14px;
     }
+
     .quote-avatar {
       width: 52px;
       height: 52px;
@@ -89,185 +119,203 @@
       border: 3px solid #eef2ff;
       flex-shrink: 0;
     }
+
     .quote-name {
       font-weight: 700;
       color: #1a3c6e;
       font-size: 0.92rem;
       margin: 0 0 2px;
     }
+
     .quote-prodi {
       font-size: 0.78rem;
       color: #6c757d;
       margin: 0;
     }
 
-    footer { background: #f8f9fa; border-top: 1px solid #dee2e6; }
+    footer {
+      background: #f8f9fa;
+      border-top: 1px solid #dee2e6;
+    }
   </style>
 </head>
+
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-      <img src="assets/images/logos/logo_mcf_utama.webp" alt="MCF Logo1" width="30" height="30">
-      <img src="assets/images/logos/logo_mcf_general.webp" alt="MCF Logo2" height="30">
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="about.html">About us</a></li>
-        <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
-        <li class="nav-item"><a class="nav-link active" href="testimonials.html">Testimonials</a></li>
-        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<section class="page-header">
-  <div class="container text-center">
-    <h1 class="fw-bold">Testimonials</h1>
-    <p class="lead mb-0">Pengalaman mahasiswa baru 2025 tentang Ma Chung Festival</p>
-  </div>
-</section>
-
-<section class="py-5">
-  <div class="container">
-
-    <!-- Row 1: Featured wide card + regular card -->
-    <div class="row g-4 mb-4">
-      <!-- Featured: Devista (longest quote, deserves more space) -->
-      <div class="col-md-8">
-        <div class="quote-card featured h-100">
-          <p class="quote-text">
-            "Momen paling berkesan selama MCF 2025 itu waktu aku sama temen-temen semua berkumpul untuk mengikuti
-            rangkaian kegiatan yang sangat padat namun penuh makna bersama teman-teman baru. Melalui acara ini, saya
-            belajar banyak tentang nilai kebersamaan, kedisiplinan, serta bagaimana cara beradaptasi dengan lingkungan
-            kampus yang dinamis secara lebih efektif. Selain itu, MCF juga memberikan manfaat besar dalam memperluas
-            relasi dan melatih kerja sama tim yang sangat berguna untuk menunjang perjalanan akademik ke depannya.
-            MCF 2025, gacorr sihh!"
-          </p>
-          <div class="quote-divider"></div>
-          <div class="quote-footer">
-            <img src="assets/images/testimonials/testi1.webp" alt="Devista Eka Maulidiah" class="quote-avatar">
-            <div>
-              <p class="quote-name">Devista Eka Maulidiah</p>
-              <p class="quote-prodi">Mahasiswa Farmasi 2025</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Stevina (shortest real quote) -->
-      <div class="col-md-4">
-        <div class="quote-card h-100">
-          <p class="quote-text">
-            "Momen paling berkesan saya adalah first impression saya terhadap mentor-mentor MCF yang bisa
-            benar-benar menunjukkan citra yang sesuai dengan standard Ma Chung dan 12 Nilai Ma Chung."
-          </p>
-          <div class="quote-divider"></div>
-          <div class="quote-footer">
-            <img src="assets/images/testimonials/testi3.webp" alt="Stevina Fransisca" class="quote-avatar">
-            <div>
-              <p class="quote-name">Stevina Fransisca</p>
-              <p class="quote-prodi">Mahasiswa Manajemen 2025</p>
-            </div>
-          </div>
-        </div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <img src="assets/images/logos/logo_mcf_utama.webp" alt="MCF Logo1" width="30" height="30">
+        <img src="assets/images/logos/logo_mcf_general.webp" alt="MCF Logo2" height="30">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About us</a></li>
+          <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+          <li class="nav-item"><a class="nav-link active" href="testimonials.html">Testimonials</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+        </ul>
       </div>
     </div>
+  </nav>
 
-    <!-- Row 2: Two equal cards -->
-    <div class="row g-4">
-      <!-- Abigail -->
-      <div class="col-md-6">
-        <div class="quote-card h-100">
-          <p class="quote-text">
-            "Meskipun awalnya aku masuk Ma Chung bukan karena kemauan sendiri, pengalaman selama Ma Chung Festival
-            bener-bener ngerubah segalanya karena vibes acaranya yang seru dan fresh banget! Aku dapet mentor yang
-            sangat helpful dan telaten membimbing, ditambah lagi kakak-kakak panitianya yang kompak dan ramah banget,
-            bikin proses adaptasi jadi nggak berasa beban. Sampai akhirnya aku ngerasa kalau Ma Chung ternyata punya
-            impresi yang sekeren itu!"
-          </p>
-          <div class="quote-divider"></div>
-          <div class="quote-footer">
-            <img src="assets/images/testimonials/testi2.webp" alt="Abigail Chandra" class="quote-avatar">
-            <div>
-              <p class="quote-name">Abigail Chandra</p>
-              <p class="quote-prodi">Mahasiswa Teknik Informatika 2025</p>
+  <section class="page-header">
+    <div class="container text-center">
+      <h1 class="fw-bold">Testimonials</h1>
+      <p class="lead mb-0">Pengalaman mahasiswa baru 2025 tentang Ma Chung Festival</p>
+    </div>
+  </section>
+
+  <section class="py-5">
+    <div class="container">
+
+      <!-- Row 1: Featured wide card + regular card -->
+      <div class="row g-4 mb-4 align-items-start">
+        <!-- Featured: Devista (longest quote, deserves more space) -->
+        <div class="col-md-8">
+          <div class="quote-card featured">
+            <p class="quote-text">
+              "Momen paling berkesan selama MCF 2025 itu waktu aku sama temen-temen semua berkumpul untuk mengikuti
+              rangkaian kegiatan yang sangat padat namun penuh makna bersama teman-teman baru. Melalui acara ini, saya
+              belajar banyak tentang nilai kebersamaan, kedisiplinan, serta bagaimana cara beradaptasi dengan lingkungan
+              kampus yang dinamis secara lebih efektif. Selain itu, MCF juga memberikan manfaat besar dalam memperluas
+              relasi dan melatih kerja sama tim yang sangat berguna untuk menunjang perjalanan akademik ke depannya.
+              MCF 2025, gacorr sihh!"
+            </p>
+            <div class="quote-divider"></div>
+            <div class="quote-footer">
+              <img src="assets/images/testimonials/testi1.webp" alt="Devista Eka Maulidiah" class="quote-avatar">
+              <div>
+                <p class="quote-name">Devista Eka Maulidiah</p>
+                <p class="quote-prodi">Mahasiswa Farmasi 2025</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Stevina (shortest real quote) -->
+        <div class="col-md-4">
+          <div class="quote-card">
+            <p class="quote-text">
+              "Momen paling berkesan saya adalah first impression saya terhadap mentor-mentor MCF yang bisa
+              benar-benar menunjukkan citra yang sesuai dengan standard Ma Chung dan 12 Nilai Ma Chung."
+            </p>
+            <div class="quote-divider"></div>
+            <div class="quote-footer">
+              <img src="assets/images/testimonials/testi3.webp" alt="Stevina Fransisca" class="quote-avatar">
+              <div>
+                <p class="quote-name">Stevina Fransisca</p>
+                <p class="quote-prodi">Mahasiswa Manajemen 2025</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- Placeholder 1 -->
-      <div class="col-md-6">
-        <div class="quote-card h-100">
-          <p class="quote-text">
-            "MCF memberikan pengalaman yang luar biasa dan tak terlupakan. Saya merasa lebih siap menghadapi
-            dunia perkuliahan setelah mengikuti seluruh rangkaian kegiatannya. Terima kasih MCF!"
-          </p>
-          <div class="quote-divider"></div>
-          <div class="quote-footer">
-            <img src="assets/images/testimonials/testi1.webp" alt="Nama Mahasiswa" class="quote-avatar">
-            <div>
-              <p class="quote-name">Nama Mahasiswa</p>
-              <p class="quote-prodi">Program Studi 2025</p>
+
+      <!-- Row 2: Two equal cards -->
+      <div class="row g-4">
+        <!-- Abigail -->
+        <div class="col-md-6">
+          <div class="quote-card h-100">
+            <p class="quote-text">
+              "Meskipun awalnya aku masuk Ma Chung bukan karena kemauan sendiri, pengalaman selama Ma Chung Festival
+              bener-bener ngerubah segalanya karena vibes acaranya yang seru dan fresh banget! Aku dapet mentor yang
+              sangat helpful dan telaten membimbing, ditambah lagi kakak-kakak panitianya yang kompak dan ramah banget,
+              bikin proses adaptasi jadi nggak berasa beban. Sampai akhirnya aku ngerasa kalau Ma Chung ternyata punya
+              impresi yang sekeren itu!"
+            </p>
+            <div class="quote-divider"></div>
+            <div class="quote-footer">
+              <img src="assets/images/testimonials/testi2.webp" alt="Abigail Chandra" class="quote-avatar">
+              <div>
+                <p class="quote-name">Abigail Chandra</p>
+                <p class="quote-prodi">Mahasiswa Teknik Informatika 2025</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Placeholder 1 -->
+        <div class="col-md-6">
+          <div class="quote-card">
+            <p class="quote-text">
+              "Awalnya nggak tau mau expect apa, tapi ternyata banyak hal yang berguna banget buat awal kuliah. Senang bisa ikut."
+            </p>
+            <div class="quote-divider"></div>
+            <div class="quote-footer">
+              <svg class="quote-avatar" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="26" cy="26" r="26" fill="#eef2ff" />
+                <circle cx="26" cy="20" r="9" fill="#c7d4f5" />
+                <ellipse cx="26" cy="44" rx="15" ry="10" fill="#c7d4f5" />
+              </svg>
+              <div>
+                <p class="quote-name">Budi Santoso</p>
+                <p class="quote-prodi">Mahasiswa Akuntansi 2025</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Placeholder 2 -->
+        <div class="col-md-6">
+          <div class="quote-card">
+            <p class="quote-text">
+              "Senang banget ngerasa diterima dari hari pertama. Teman-teman baru yang ketemu di MCF masih sering kontak sampai sekarang."
+            </p>
+            <div class="quote-divider"></div>
+            <div class="quote-footer">
+              <svg class="quote-avatar" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="26" cy="26" r="26" fill="#eef2ff" />
+                <circle cx="26" cy="20" r="9" fill="#c7d4f5" />
+                <ellipse cx="26" cy="44" rx="15" ry="10" fill="#c7d4f5" />
+              </svg>
+              <div>
+                <p class="quote-name">Sari Dewi Rahayu</p>
+                <p class="quote-prodi">Mahasiswa Manajemen 2025</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Placeholder 3 -->
+        <div class="col-md-6">
+          <div class="quote-card">
+            <p class="quote-text">
+              "Tiap kegiatan beda-beda, dan itu yang bikin nggak bosen. Yang paling berkesan buat saya waktu OBOR."
+            </p>
+            <div class="quote-divider"></div>
+            <div class="quote-footer">
+              <svg class="quote-avatar" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="26" cy="26" r="26" fill="#eef2ff" />
+                <circle cx="26" cy="20" r="9" fill="#c7d4f5" />
+                <ellipse cx="26" cy="44" rx="15" ry="10" fill="#c7d4f5" />
+              </svg>
+              <div>
+                <p class="quote-name">Rizki Firmansyah</p>
+                <p class="quote-prodi">Mahasiswa Desain Komunikasi Visual 2025</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- Placeholder 2 -->
-      <div class="col-md-6">
-        <div class="quote-card h-100">
-          <p class="quote-text">
-            "Kegiatan-kegiatan dalam MCF sangat berkesan dan membuat saya merasa disambut dengan hangat di
-            lingkungan Universitas Ma Chung. Saya bangga menjadi bagian dari keluarga besar MCF!"
-          </p>
-          <div class="quote-divider"></div>
-          <div class="quote-footer">
-            <img src="assets/images/testimonials/testi2.webp" alt="Nama Mahasiswa" class="quote-avatar">
-            <div>
-              <p class="quote-name">Nama Mahasiswa</p>
-              <p class="quote-prodi">Program Studi 2025</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Placeholder 3 -->
-      <div class="col-md-6">
-        <div class="quote-card h-100">
-          <p class="quote-text">
-            "MCF adalah awal dari perjalanan indah saya di Universitas Ma Chung. Banyak pelajaran berharga
-            yang saya petik dari setiap kegiatan yang penuh makna dan membekas di hati."
-          </p>
-          <div class="quote-divider"></div>
-          <div class="quote-footer">
-            <img src="assets/images/testimonials/testi3.webp" alt="Nama Mahasiswa" class="quote-avatar">
-            <div>
-              <p class="quote-name">Nama Mahasiswa</p>
-              <p class="quote-prodi">Program Studi 2025</p>
-            </div>
-          </div>
+
+    </div>
+  </section>
+
+  <footer class="py-4">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-muted small">Copyright &copy; 2026 <strong>Ma Chung Festival</strong>. All rights
+          reserved.</div>
+        <div class="col-md-6 text-md-end small">
+          <a href="assets/documents/booklet_peraturan_mcf_2025.pdf" class="text-muted me-3" target="_blank"
+            rel="noopener">Panduan Peserta &amp; Kebijakan MCF</a>
         </div>
       </div>
     </div>
+  </footer>
 
-  </div>
-</section>
-
-<footer class="py-4">
-  <div class="container">
-    <div class="row align-items-center">
-      <div class="col-md-6 text-muted small">Copyright &copy; 2026 <strong>Ma Chung Festival</strong>. All rights reserved.</div>
-      <div class="col-md-6 text-md-end small">
-        <a href="assets/documents/booklet_peraturan_mcf_2025.pdf" class="text-muted me-3">Panduan Peserta &amp; Kebijakan MCF</a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
