@@ -12,17 +12,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tampil   = isset($_POST['tampilkan']) ? 1 : 0;
     if ($nama === '' || $isi === '') { $error = 'Nama dan isi testimoni wajib diisi.'; }
     else {
-        $sql  = "INSERT INTO testimonials (nama, prodi, angkatan, isi_testimoni, foto, tampilkan) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, 'ssssi', $nama, $prodi, $isi, $foto, $tampil);
-        // angkatan perlu di-bind terpisah karena tipe YEAR bisa kosong
+        // Angkatan boleh kosong — kalau kosong simpan sebagai null
+        $angkatan_val = ($angkatan !== '') ? $angkatan : null;
+
+        // 6 placeholder → 6 tipe → 6 variabel: nama, prodi, angkatan, isi, foto, tampilkan
         $stmt = mysqli_prepare($conn, "INSERT INTO testimonials (nama, prodi, angkatan, isi_testimoni, foto, tampilkan) VALUES (?, ?, ?, ?, ?, ?)");
-        $angkatan_val = $angkatan !== '' ? intval($angkatan) : null;
-        mysqli_stmt_bind_param($stmt, 'ssisis', $nama, $prodi, $angkatan_val, $isi, $foto, $tampil);
+        mysqli_stmt_bind_param($stmt, 'sssssi', $nama, $prodi, $angkatan_val, $isi, $foto, $tampil);
         if (mysqli_stmt_execute($stmt)) { header("Location: testimonial_list.php?status=ditambah"); exit; }
         else { $error = 'Gagal menyimpan. Coba lagi.'; }
     }
-    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
