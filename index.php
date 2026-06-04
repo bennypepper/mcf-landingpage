@@ -1,7 +1,8 @@
 <?php
 // ============================================================
-// index.php — Halaman utama MCF (milik Liza)
-// Membaca preview events dan testimonials dari database
+// index.php — Halaman Home MCF
+// Dikerjakan oleh: Elizabeth Anndini Shayna Putri (312310014)
+// Membaca dari tabel: events, testimonials
 // ============================================================
 include 'koneksi.php';
 
