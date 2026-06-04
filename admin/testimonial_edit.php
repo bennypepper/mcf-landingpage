@@ -21,8 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $angkatan_val = $angkatan !== '' ? intval($angkatan) : null;
         $stmt = mysqli_prepare($conn, "UPDATE testimonials SET nama=?, prodi=?, angkatan=?, isi_testimoni=?, foto=?, tampilkan=? WHERE id=?");
         mysqli_stmt_bind_param($stmt, 'ssissii', $nama, $prodi, $angkatan_val, $isi, $foto, $tampil, $id);
-        mysqli_stmt_execute($stmt);
-        header("Location: testimonial_list.php?status=diedit"); exit;
+        if (mysqli_stmt_execute($stmt)) {
+            header("Location: testimonial_list.php?status=diedit"); exit;
+        } else {
+            $error = 'Gagal menyimpan perubahan: ' . mysqli_error($conn);
+        }
     }
 }
 ?>
