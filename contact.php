@@ -38,10 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error = 'Terjadi kesalahan. Silakan coba lagi.';
         }
-    }
 }
-
-mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html lang="id">
