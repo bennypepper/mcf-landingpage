@@ -45,7 +45,16 @@ if (isset($_GET['status'])) {
       <div class="table-responsive">
         <table class="table table-hover align-middle">
           <thead class="table-light">
-            <tr><th>#</th><th>Foto</th><th>Nama</th><th>Prodi</th><th>Angkatan</th><th>Isi (ringkas)</th><th>Tampil</th><th>Aksi</th></tr>
+            <tr>
+              <th style="width: 3%;">#</th>
+              <th style="width: 7%;">Foto</th>
+              <th style="width: 15%;">Nama</th>
+              <th style="width: 10%;">Prodi</th>
+              <th style="width: 5%;">Angkatan</th>
+              <th style="width: 35%;">Isi (ringkas)</th>
+              <th style="width: 5%;">Tampil</th>
+              <th style="width: 10%;">Aksi</th>
+            </tr>
           </thead>
           <tbody>
             <?php foreach ($testis as $i => $t): ?>
