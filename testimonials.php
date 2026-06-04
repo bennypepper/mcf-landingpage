@@ -1,7 +1,8 @@
 <?php
 // ============================================================
-// testimonials.php — Halaman testimoni peserta MCF (milik Elroi)
-// Mengambil data dari tabel 'testimonials' yang aktif (tampilkan=1)
+// testimonials.php — Halaman Testimonials MCF
+// Dikerjakan oleh: Elroi Yonatan Raharjo (312310015)
+// Tabel: testimonials
 // ============================================================
 include 'koneksi.php';
 
