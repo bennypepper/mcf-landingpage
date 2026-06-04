@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error = 'Terjadi kesalahan. Silakan coba lagi.';
         }
+    }
 }
 ?>
 <!DOCTYPE html>
