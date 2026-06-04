@@ -2,68 +2,84 @@
 
 ## Konteks Proyek
 
-Proyek ini merupakan tugas mata kuliah Pemrograman Web untuk membuat landing page event kampus menggunakan Bootstrap.
+Proyek ini merupakan tugas mata kuliah Pemrograman Web untuk membuat landing page event kampus menggunakan Bootstrap dan PHP.
 
-Event kampus yang dipilih oleh kelompok kami adalah **Ma Chung Festival (MCF)**.
+Event kampus yang dipilih oleh kelompok kami adalah **Ma Chung Festival (MCF)** — program orientasi tahunan Universitas Ma Chung untuk mahasiswa baru.
 
-Saat ini website masih berupa versi static (front-end saja), dan akan dikembangkan ke tahap berikutnya agar fungsional dengan backend menggunakan PHP.
+## Tahap Pengembangan
 
-## Tujuan Proyek
+Proyek ini sudah melewati dua tahap:
 
-- Menyediakan landing page informatif untuk Ma Chung Festival.
-- Menampilkan informasi utama event dalam beberapa halaman.
-- Menjadi fondasi untuk pengembangan sistem berbasis PHP pada tahap lanjutan.
+1. **Tahap 1 (Static)** — Website front-end menggunakan HTML + Bootstrap
+2. **Tahap 2 (Backend)** — Integrasi PHP + MySQL: konten dikelola lewat database dan admin panel
 
-## Fitur Halaman
+## Fitur Halaman Publik
 
-- `index.html`: halaman utama (hero + ringkasan festival)
-- `about.html`: profil dan keunggulan Ma Chung Festival
-- `events.html`: daftar rangkaian event MCF
-- `testimonials.html`: testimoni peserta/orang tua
-- `contact.html`: informasi kontak dan form pesan
+- `index.php` — Halaman utama (hero + preview events + testimonial)
+- `about.php` — Profil MCF, statistik, dan tujuan program (dari database)
+- `events.php` — Daftar rangkaian event MCF (dari database)
+- `testimonials.php` — Testimoni peserta (dari database)
+- `contact.php` — Form pesan (tersimpan ke database)
+
+## Admin Panel
+
+Tersedia di `admin/login.php` — hanya bisa diakses dengan username dan password.
+
+Fitur yang tersedia:
+- Kelola Events (tambah, edit, hapus)
+- Kelola Testimonials (tambah, edit, hapus, toggle tampil)
+- Lihat dan kelola Pesan Masuk dari form contact
+- Kelola data halaman About (statistik angka + kartu tujuan program)
 
 ## Tech Stack
 
-- HTML5
-- CSS (inline di masing-masing file)
+- PHP (prosedural, embedded style)
+- MySQL via MySQLi (prosedural)
 - Bootstrap 5.3 (CDN)
 - Bootstrap Icons (CDN)
-- Bootstrap Bundle JS (CDN)
+- XAMPP (Apache + MySQL lokal)
 
 ## Cara Menjalankan
 
-Karena ini proyek static HTML, website dapat dijalankan dengan:
+1. Pastikan XAMPP berjalan (Apache + MySQL aktif)
+2. Salin folder `mcf-landingpage/` ke `C:\xampp\htdocs\`
+3. Import `database.sql` via phpMyAdmin
+4. Buka browser: `http://localhost/mcf-landingpage/index.php`
+5. Admin panel: `http://localhost/mcf-landingpage/admin/login.php`
 
-1. Membuka `index.html` langsung di browser.
-2. Menjalankan local server (disarankan), misalnya dengan VS Code Live Server.
-
-Langkah cepat dengan Live Server:
-
-1. Install extension "Live Server" di VS Code.
-2. Klik kanan `index.html`.
-3. Pilih "Open with Live Server".
+Untuk panduan lengkap setup dan aturan penulisan kode, baca [GUIDE.md](GUIDE.md).
 
 ## Struktur File
 
-- `index.html`
-- `about.html`
-- `events.html`
-- `testimonials.html`
-- `contact.html`
-- `README.md`
-- `GUIDE.md`
-
-## Catatan Pengembangan
-
-- Komponen navbar dan footer saat ini ditulis di setiap halaman, sehingga perubahan harus disinkronkan manual.
-- Form pada `contact.html` masih sebatas UI dan belum terhubung ke backend.
-- Tahap berikutnya: integrasi backend PHP untuk proses data (misalnya form kontak, data event dinamis, dan manajemen konten).
+```
+mcf-landingpage/
+├── koneksi.php
+├── index.php
+├── about.php
+├── events.php
+├── testimonials.php
+├── contact.php
+├── database.sql
+├── admin/
+│   ├── login.php, logout.php, dashboard.php
+│   ├── events_list.php, events_tambah.php, events_edit.php, events_hapus.php
+│   ├── testimonial_list.php, testimonial_tambah.php, testimonial_edit.php, testimonial_hapus.php
+│   ├── pesan_list.php, pesan_tandai.php, pesan_hapus.php
+│   ├── about_stat_list.php, about_stat_tambah.php, about_stat_edit.php, about_stat_hapus.php
+│   ├── about_tujuan_list.php, about_tujuan_tambah.php, about_tujuan_edit.php, about_tujuan_hapus.php
+│   ├── admin_sidebar.php
+│   └── admin_style.php
+└── assets/
+    ├── images/
+    └── documents/
+```
 
 ## Anggota Kelompok
 
-- Alexandra Jennifer Matahurila / 312310004
-- Benedict Michael Pepper / 312310007
-- Elizabeth Anndini Shayna Putri / 312310014
-- Elroi Yonatan Raharjo / 312310015
-- James William Ongkodjojo / 312310021
-
+| Nama | NIM | Bagian |
+|---|---|---|
+| Alexandra Jennifer Matahurila | 312310004 | About (`about.php` + admin about) |
+| Benedict Michael Pepper | 312310007 | Contact + Infrastruktur (leader) |
+| Elizabeth Anndini Shayna Putri | 312310014 | Home (`index.php`) |
+| Elroi Yonatan Raharjo | 312310015 | Testimonials |
+| James William Ongkodjojo | 312310021 | Events |
