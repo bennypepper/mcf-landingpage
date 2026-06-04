@@ -48,11 +48,11 @@ if (isset($_GET['status'])) {
             <tr>
               <th style="width: 3%;">#</th>
               <th style="width: 7%;">Foto</th>
-              <th style="width: 20%;">Nama</th>
-              <th style="width: 1%;">Prodi</th>
-              <th style="width: 10%;">Angkatan</th>
-              <th style="width: 30%;">Isi (ringkas)</th>
-              <th style="width: 10%;">Tampil</th>
+              <th style="width: 15%;">Nama</th>
+              <th style="width: 10%;">Prodi</th>
+              <th style="width: 5%;">Angkatan</th>
+              <th style="width: 35%;">Isi (ringkas)</th>
+              <th style="width: 5%;">Tampil</th>
               <th style="width: 10%;">Aksi</th>
             </tr>
           </thead>
