@@ -1,7 +1,8 @@
 <?php
 // ============================================================
-// about.php — Halaman tentang MCF (milik Jennifer)
-// Membaca dari dua tabel: about_statistik dan about_tujuan
+// about.php — Halaman About MCF
+// Dikerjakan oleh: Alexandra Jennifer Matahurila (312310004)
+// Tabel: about_statistik, about_tujuan
 // ============================================================
 include 'koneksi.php';
 
