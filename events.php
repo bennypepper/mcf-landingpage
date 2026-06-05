@@ -1,7 +1,8 @@
 <?php
 // ============================================================
-// events.php — Halaman daftar event MCF (milik James)
-// Mengambil data dari tabel 'events', diurutkan berdasar urutan
+// events.php — Halaman Events MCF
+// Dikerjakan oleh: James William Ongkodjojo (312310021)
+// Tabel: events
 // ============================================================
 include 'koneksi.php';
 
