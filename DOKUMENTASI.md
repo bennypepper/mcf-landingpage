@@ -323,15 +323,13 @@ koneksi.php
 Variabel `$conn` ini kemudian dipakai di semua query di seluruh proyek. Kalau file ini error (misalnya database tidak jalan), semua halaman akan error juga.
 
 #### `contact.php`
-Halaman ini punya dua fungsi: menampilkan form dan memproses pengiriman pesan.
+Halaman ini punya dua fungsi: menampilkan form dan memproses pengiriman pesan, dilengkapi dengan validasi **Captcha JavaScript client-side** untuk mencegah bot spam.
 
 **Alur kerja contact.php:**
-1. Pertama dicek: ada data POST dari form tidak?
-2. Kalau ada → ambil input (`nama`, `email`, `nomor_telepon`, `pesan`) → validasi → simpan ke tabel `pesan_kontak` → redirect ke `contact.php?status=sukses`
-3. Kalau tidak ada (halaman baru dibuka) → langsung tampilkan form kosong
-4. Kalau URL punya `?status=sukses` → tampilkan pesan "Terima kasih, pesan sudah terkirim"
-
-Yang penting: setelah data disimpan, langsung dilakukan `header("Location: ...")` untuk redirect. Ini mencegah pesan dikirim dua kali kalau pengguna refresh halaman.
+1. **Inisialisasi Halaman:** Kode Captcha acak berisi 5 karakter alfanumerik dihasilkan otomatis via JS dan ditampilkan dalam box visual dengan gaya coret (*line-through*).
+2. **Validasi Captcha (Client-Side):** Saat pengguna mengklik tombol submit, skrip JS membandingkan input Captcha dengan kode yang digenerate (secara *case-insensitive*). Jika tidak cocok, submits dihentikan (`event.preventDefault()`) dan alert error ditampilkan secara instan.
+3. **Penyimpanan Pesan (Backend PHP):** Jika lolos captcha, form terkirim via POST ke bagian PHP atas ➔ Ambil input (`nama`, `email`, `nomor_telepon`, `pesan`) ➔ Validasi ➔ Simpan ke tabel `pesan_kontak` menggunakan prepared statement ➔ Redirect ke `contact.php?status=sukses` (untuk mencegah double submit saat halaman di-refresh).
+4. **Notifikasi Berhasil:** Jika URL mengandung query string `?status=sukses`, tampilkan alert sukses berwarna hijau di atas form.
 
 #### `database.sql`
 Bukan file PHP, tapi sangat penting. Ini adalah script SQL yang membuat semua tabel dan mengisi data awal. Siapapun yang ingin menjalankan proyek ini di laptop baru cukup import file ini ke phpMyAdmin.
@@ -372,20 +370,16 @@ Menampilkan semua testimoni dalam tabel, termasuk yang `tampilkan = 0` (disembun
 Form untuk menambah testimoni baru. Field yang ada:
 - Nama, Program Studi, Angkatan
 - Isi testimoni (textarea)
-- Path foto (ketik manual, bukan upload file)
+- Unggah Foto Profil (`foto_file` berupa file gambar, bukan lagi mengetik path manual)
 - Checkbox "Tampilkan di website"
 
-Setelah submit, data disimpan ke tabel `testimonials` menggunakan prepared statement, lalu redirect ke `testimonial_list.php?status=ditambah`.
+Setelah submit, file foto diproses oleh backend PHP, divalidasi ukuran (maksimal 2MB) dan ekstensinya, disimpan dengan nama unik di folder `assets/images/testimonials/`, lalu path relatifnya disimpan ke database.
 
 #### `admin/testimonial_edit.php`
-Sama seperti form tambah, tapi field sudah terisi data yang ada. Prosesnya:
-1. Baca `?id=...` dari URL
-2. Query tabel untuk ambil data testimoni dengan ID tersebut
-3. Tampilkan form dengan nilai dari database
-4. Setelah submit → UPDATE di database → redirect
+Sama seperti form tambah, tapi field sudah terisi data yang ada. Jika admin mengunggah file foto profil baru, file foto lama hasil upload sebelumnya akan otomatis dihapus secara fisik dari server (menggunakan `unlink()`), kecuali jika file lama merupakan seed data bawaan (`testi1.webp`, dst.).
 
 #### `admin/testimonial_hapus.php`
-Tidak punya tampilan HTML. Langsung jalankan DELETE berdasarkan ID dari URL, lalu redirect ke daftar.
+Tidak punya tampilan HTML. Sebelum menghapus data dari database, program membaca path foto dari database. Jika file fisiknya ada di server dan bukan seed data bawaan, file tersebut dihapus secara fisik (`unlink()`), kemudian data di database dihapus dan halaman dialihkan kembali ke daftar.
 
 ---
 
@@ -420,7 +414,11 @@ Form tambah/edit hanya punya tiga field: **Angka** (teks bebas, contoh "9+" atau
 #### CRUD untuk `about_tujuan`
 4 file: `about_tujuan_list`, `about_tujuan_tambah`, `about_tujuan_edit`, `about_tujuan_hapus`
 
-Form ini lebih lengkap: ada **Judul**, **Deskripsi**, **Path Gambar**, dan **Urutan**. Di halaman edit, gambar yang sudah tersimpan ditampilkan sebagai preview. Kalau admin mengetik path baru, preview langsung berubah (pakai sedikit JavaScript).
+Form ini lebih lengkap: ada **Judul**, **Deskripsi**, **Upload Gambar Tujuan Program** (`gambar_file` menggunakan `<input type="file">`), dan **Urutan**. 
+Di bagian backend, gambar yang diunggah divalidasi ukuran (maks 2MB) dan jenisnya, disimpan ke folder `assets/images/gallery/` dengan nama unik, dan path-nya disimpan di database.
+Pada halaman edit, jika gambar diganti, gambar lama dihapus dari server (kecuali jika gambar lama adalah seed data bawaan seperti `tujuan_transisi.webp`, dst.).
+Pada halaman hapus, gambar tujuan program terunggah akan dihapus secara fisik sebelum data dihapus dari database.
+Untuk preview gambar sebelum diunggah pada form tambah/edit, sistem menggunakan API `FileReader` JavaScript.
 
 ---
 
@@ -469,20 +467,17 @@ Untuk tiap event:
 Tabel daftar semua event dengan kolom: nama, tanggal, lokasi, thumbnail gambar, urutan, dan tombol aksi. Kalau ada notifikasi dari aksi sebelumnya (baru ditambah/diedit/dihapus), ditampilkan sebagai alert hijau atau kuning di atas tabel.
 
 #### `admin/events_tambah.php`
-Form dengan field: Nama Event, Deskripsi, Tanggal, Lokasi, Path Gambar, dan Urutan.
+Form dengan field: Nama Event, Deskripsi, Tanggal, Lokasi, Pilih Gambar Event (`gambar_file` menggunakan `<input type="file">`), dan Urutan.
 
-Fitur khusus: saat admin mengetik path gambar, ada preview gambar kecil yang langsung muncul di bawahnya. Ini pakai JavaScript sederhana:
-```javascript
-function previewGambar(path) {
-    document.getElementById('previewImg').src = '../' + path;
-}
-```
+Fitur khusus: saat admin memilih file gambar dari komputer lokal, ada preview gambar kecil yang langsung muncul secara instan di bawahnya menggunakan API `FileReader` JavaScript.
+
+Di backend, file gambar diproses, divalidasi ukuran (maks 2MB) dan jenisnya, disimpan ke folder `assets/images/events/` dengan nama unik acak, dan path-nya disimpan ke database.
 
 #### `admin/events_edit.php`
-Sama seperti tambah, tapi data sudah diambil dari database berdasarkan `?id=...` di URL dan form sudah terisi nilainya.
+Sama seperti tambah, tapi data sudah diambil dari database berdasarkan `?id=...` di URL. Menampilkan gambar yang saat ini aktif. Jika admin mengunggah file gambar baru, gambar lama dihapus secara fisik dari server (menggunakan `unlink()`), kecuali jika merupakan seed data bawaan (`parentsday.webp`, dst.).
 
 #### `admin/events_hapus.php`
-Tidak ada tampilan. Ambil ID dari URL → jalankan DELETE → redirect.
+Tidak ada tampilan. Ambil ID dari URL ➔ Query path gambar ➔ Hapus file fisik gambar dari folder `assets/images/events/` jika ada dan bukan seed data bawaan ➔ Jalankan SQL DELETE ➔ Redirect.
 
 ---
 
