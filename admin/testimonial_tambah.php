@@ -8,18 +8,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prodi    = trim($_POST['prodi']);
     $angkatan = trim($_POST['angkatan']);
     $isi      = trim($_POST['isi_testimoni']);
-    $foto     = trim($_POST['foto']);
+    $foto     = null;
     $tampil   = isset($_POST['tampilkan']) ? 1 : 0;
-    if ($nama === '' || $isi === '') { $error = 'Nama dan isi testimoni wajib diisi.'; }
-    else {
-        // Angkatan boleh kosong — kalau kosong simpan sebagai null
-        $angkatan_val = ($angkatan !== '') ? $angkatan : null;
+    
+    if ($nama === '' || $isi === '') { 
+        $error = 'Nama dan isi testimoni wajib diisi.'; 
+    } else {
+        // Proses upload file foto jika ada file yang diunggah
+        if (isset($_FILES['foto_file']) && $_FILES['foto_file']['error'] === UPLOAD_ERR_OK) {
+            $file_tmpPath = $_FILES['foto_file']['tmp_name'];
+            $file_name = $_FILES['foto_file']['name'];
+            $file_size = $_FILES['foto_file']['size'];
+            
+            $file_name_cmps = explode(".", $file_name);
+            $file_ext = strtolower(end($file_name_cmps));
+            
+            $allowed_exts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            if (in_array($file_ext, $allowed_exts)) {
+                if ($file_size <= 2097152) { // Batasi 2MB
+                    $new_file_name = time() . '_' . md5(uniqid()) . '.' . $file_ext;
+                    $upload_dir = '../assets/images/testimonials/';
+                    
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0755, true);
+                    }
+                    
+                    $dest_path = $upload_dir . $new_file_name;
+                    if (move_uploaded_file($file_tmpPath, $dest_path)) {
+                        $foto = 'assets/images/testimonials/' . $new_file_name;
+                    } else {
+                        $error = 'Gagal memindahkan file foto ke direktori tujuan.';
+                    }
+                } else {
+                    $error = 'Ukuran file foto maksimal 2MB.';
+                }
+            } else {
+                $error = 'Format file tidak valid. Hanya JPG, JPEG, PNG, GIF, dan WEBP.';
+            }
+        }
 
-        // 6 placeholder → 6 tipe → 6 variabel: nama, prodi, angkatan, isi, foto, tampilkan
-        $stmt = mysqli_prepare($conn, "INSERT INTO testimonials (nama, prodi, angkatan, isi_testimoni, foto, tampilkan) VALUES (?, ?, ?, ?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, 'sssssi', $nama, $prodi, $angkatan_val, $isi, $foto, $tampil);
-        if (mysqli_stmt_execute($stmt)) { header("Location: testimonial_list.php?status=ditambah"); exit; }
-        else { $error = 'Gagal menyimpan. Coba lagi.'; }
+        if ($error === '') {
+            // Angkatan boleh kosong — kalau kosong simpan sebagai null
+            $angkatan_val = ($angkatan !== '') ? $angkatan : null;
+
+            $stmt = mysqli_prepare($conn, "INSERT INTO testimonials (nama, prodi, angkatan, isi_testimoni, foto, tampilkan) VALUES (?, ?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, 'sssssi', $nama, $prodi, $angkatan_val, $isi, $foto, $tampil);
+            if (mysqli_stmt_execute($stmt)) { 
+                header("Location: testimonial_list.php?status=ditambah"); exit; 
+            } else { 
+                $error = 'Gagal menyimpan data ke database. Coba lagi.'; 
+            }
+        }
     }
 }
 ?>
@@ -40,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
   <?php if ($error): ?><div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i><?= htmlspecialchars($error) ?></div><?php endif; ?>
   <div class="form-card">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       <div class="row g-3 mb-3">
         <div class="col-md-6">
           <label class="form-label fw-semibold">Nama <span class="text-danger">*</span></label>
@@ -60,11 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <textarea name="isi_testimoni" class="form-control" rows="4" required></textarea>
       </div>
       <div class="mb-3">
-        <label class="form-label fw-semibold">Path Foto</label>
-        <input type="text" name="foto" class="form-control" placeholder="assets/images/testimonials/testi1.webp"
-               oninput="previewGambar(this.value)">
-        <div class="form-text">Kosongkan jika tidak ada foto</div>
-        <img id="previewImg" src="" alt="Preview" class="gambar-preview" style="display:none;width:60px;height:60px;border-radius:50%;object-fit:cover;">
+        <label class="form-label fw-semibold">Foto Profil</label>
+        <input type="file" name="foto_file" id="inputFoto" class="form-control" accept="image/*" onchange="previewFile(this)">
+        <div class="form-text">Pilih file foto (Format: JPG, JPEG, PNG, GIF, WEBP. Maks: 2MB)</div>
+        <img id="previewImg" src="" alt="Preview" class="gambar-preview" style="display:none; width:80px; height:80px; border-radius:50%; object-fit:cover; margin-top:10px;">
       </div>
       <div class="mb-4">
         <div class="form-check">
@@ -80,10 +118,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 </div>
 <script>
-function previewGambar(path) {
-  var img = document.getElementById('previewImg');
-  if (path.trim()) { img.src = '../' + path.trim(); img.style.display='block'; img.onerror=()=>{img.style.display='none'}; }
-  else { img.style.display='none'; }
+// Fungsi untuk mem-preview foto lokal yang dipilih oleh user
+function previewFile(input) {
+  var preview = document.getElementById('previewImg');
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    }
+    reader.readAsDataURL(input.files[0]);
+  } else {
+    preview.style.display = 'none';
+  }
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

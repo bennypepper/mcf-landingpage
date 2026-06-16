@@ -711,50 +711,11 @@ mysqli_close($conn);
 
 ---
 
-### 8.3 — Pola CRUD untuk Events dan Testimonial
+### 8.3 — Pola CRUD untuk Events, Testimonials, dan Tujuan Program (Dengan Upload File)
 
-Setiap operasi mengikuti pola yang **sama dan konsisten**:
+Setiap operasi manipulasi data gambar di Admin Panel mengikuti pola yang **sama dan konsisten** menggunakan upload file gambar langsung, bukan input manual URL/path gambar.
 
-#### Tambah Data — `events_tambah.php`
-
-```php
-<?php
-session_start();
-if (!isset($_SESSION['admin_id'])) { header("Location: login.php"); exit; }
-
-include '../koneksi.php';
-
-$pesan = '';
-
-// Proses form tambah event
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama_event  = trim($_POST['nama_event']);
-    $deskripsi   = trim($_POST['deskripsi']);
-    $tanggal     = $_POST['tanggal'];
-    $lokasi      = trim($_POST['lokasi']);
-    $gambar      = trim($_POST['gambar']);
-    $urutan      = intval($_POST['urutan']);
-
-    // Simpan ke database
-    $sql  = "INSERT INTO events (nama_event, deskripsi, tanggal, lokasi, gambar, urutan) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 'sssssi', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan);
-
-    if (mysqli_stmt_execute($stmt)) {
-        // Kembali ke daftar event setelah berhasil
-        header("Location: events_list.php?status=ditambah");
-        exit;
-    } else {
-        $pesan = 'Gagal menambah event.';
-    }
-    mysqli_close($conn);
-}
-?>
-<!DOCTYPE html>
-<!-- Form HTML tambah event ... -->
-```
-
-#### Edit Data — `events_edit.php`
+#### Tambah Data — `events_tambah.php` (Contoh Form & Upload)
 
 ```php
 <?php
@@ -763,72 +724,214 @@ if (!isset($_SESSION['admin_id'])) { header("Location: login.php"); exit; }
 
 include '../koneksi.php';
 
-// Ambil ID dari URL
-$id = intval($_GET['id']);
+$error = '';
 
-// Ambil data event yang akan diedit
-$sql    = "SELECT * FROM events WHERE id = ?";
-$stmt   = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, 'i', $id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$event  = mysqli_fetch_assoc($result);
-
-// Kalau event tidak ditemukan, kembali ke daftar
-if (!$event) {
-    header("Location: events_list.php");
-    exit;
-}
-
-// Proses form edit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_event = trim($_POST['nama_event']);
     $deskripsi  = trim($_POST['deskripsi']);
     $tanggal    = $_POST['tanggal'];
     $lokasi     = trim($_POST['lokasi']);
-    $gambar     = trim($_POST['gambar']);
     $urutan     = intval($_POST['urutan']);
+    $gambar     = ''; // Akan menyimpan path gambar baru
 
-    $sql  = "UPDATE events SET nama_event=?, deskripsi=?, tanggal=?, lokasi=?, gambar=?, urutan=? WHERE id=?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 'sssssii', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan, $id);
-    mysqli_stmt_execute($stmt);
+    if ($nama_event === '' || $tanggal === '') {
+        $error = 'Nama event dan tanggal wajib diisi.';
+    } else {
+        // 1. Proses upload file gambar
+        if (isset($_FILES['gambar_file']) && $_FILES['gambar_file']['error'] === UPLOAD_ERR_OK) {
+            $file_tmpPath = $_FILES['gambar_file']['tmp_name'];
+            $file_name = $_FILES['gambar_file']['name'];
+            $file_size = $_FILES['gambar_file']['size'];
+            
+            $file_name_cmps = explode(".", $file_name);
+            $file_ext = strtolower(end($file_name_cmps));
+            
+            $allowed_exts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            if (in_array($file_ext, $allowed_exts)) {
+                if ($file_size <= 2097152) { // Maks 2MB
+                    // Buat nama file acak yang unik untuk menghindari tabrakan
+                    $new_file_name = time() . '_' . md5(uniqid()) . '.' . $file_ext;
+                    $upload_dir = '../assets/images/events/';
+                    
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0755, true);
+                    }
+                    
+                    $dest_path = $upload_dir . $new_file_name;
+                    if (move_uploaded_file($file_tmpPath, $dest_path)) {
+                        $gambar = 'assets/images/events/' . $new_file_name;
+                    } else {
+                        $error = 'Gagal memindahkan file gambar ke direktori server.';
+                    }
+                } else {
+                    $error = 'Ukuran file gambar maksimal 2MB.';
+                }
+            } else {
+                $error = 'Format file tidak valid. Hanya JPG, JPEG, PNG, GIF, dan WEBP.';
+            }
+        } else {
+            $error = 'File gambar wajib diunggah.';
+        }
 
-    header("Location: events_list.php?status=diedit");
-    exit;
+        // 2. Simpan ke database jika tidak ada error upload
+        if ($error === '') {
+            $sql  = "INSERT INTO events (nama_event, deskripsi, tanggal, lokasi, gambar, urutan) VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 'sssssi', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan);
+            if (mysqli_stmt_execute($stmt)) {
+                header("Location: events_list.php?status=ditambah"); exit;
+            } else {
+                $error = 'Gagal menyimpan data ke database. Coba lagi.';
+            }
+        }
+    }
 }
-
-mysqli_close($conn);
 ?>
 <!DOCTYPE html>
-<!-- Form HTML edit event, dengan value diisi dari $event['...'] -->
+<!-- HTML: Wajib tambahkan enctype="multipart/form-data" -->
+<form method="POST" action="events_tambah.php" enctype="multipart/form-data">
+  <!-- Input file gambar menggantikan input teks path relatif -->
+  <input type="file" name="gambar_file" accept="image/*" required onchange="previewFile(this)">
+  <!-- Preview Gambar Lokal -->
+  <img id="previewImg" src="" style="display:none; max-height:180px; margin-top:10px;">
+</form>
+
+<script>
+// Menampilkan preview instan dari local file
+function previewFile(input) {
+  var preview = document.getElementById('previewImg');
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+</script>
 ```
 
-#### Hapus Data — `events_hapus.php`
+#### Edit Data — `events_edit.php` (Penggantian & Hapus File Lama)
 
 ```php
 <?php
-// ============================================================
-// events_hapus.php — Proses hapus event
-// Tidak ada halaman HTML — langsung proses dan redirect
-// ============================================================
 session_start();
 if (!isset($_SESSION['admin_id'])) { header("Location: login.php"); exit; }
-
 include '../koneksi.php';
 
-// Ambil ID dari URL
 $id = intval($_GET['id']);
-
-// Hapus event dari database
-$sql  = "DELETE FROM events WHERE id = ?";
-$stmt = mysqli_prepare($conn, $sql);
+// Ambil data lama
+$sql    = "SELECT * FROM events WHERE id = ?";
+$stmt   = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, 'i', $id);
 mysqli_stmt_execute($stmt);
+$event  = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+if (!$event) { header("Location: events_list.php"); exit; }
 
-mysqli_close($conn);
+$error = '';
 
-// Kembali ke daftar
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nama_event = trim($_POST['nama_event']);
+    $deskripsi  = trim($_POST['deskripsi']);
+    $tanggal    = $_POST['tanggal'];
+    $lokasi     = trim($_POST['lokasi']);
+    $urutan     = intval($_POST['urutan']);
+    $gambar     = $event['gambar']; // Default menggunakan gambar lama
+
+    if ($nama_event === '' || $tanggal === '') {
+        $error = 'Nama event dan tanggal wajib diisi.';
+    } else {
+        // Cek apakah ada file baru yang diunggah untuk menggantikan gambar lama
+        if (isset($_FILES['gambar_file']) && $_FILES['gambar_file']['error'] === UPLOAD_ERR_OK) {
+            $file_tmpPath = $_FILES['gambar_file']['tmp_name'];
+            $file_name = $_FILES['gambar_file']['name'];
+            $file_size = $_FILES['gambar_file']['size'];
+            
+            $file_name_cmps = explode(".", $file_name);
+            $file_ext = strtolower(end($file_name_cmps));
+            
+            $allowed_exts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            if (in_array($file_ext, $allowed_exts)) {
+                if ($file_size <= 2097152) {
+                    $new_file_name = time() . '_' . md5(uniqid()) . '.' . $file_ext;
+                    $upload_dir = '../assets/images/events/';
+                    $dest_path = $upload_dir . $new_file_name;
+                    
+                    if (move_uploaded_file($file_tmpPath, $dest_path)) {
+                        $gambar_baru = 'assets/images/events/' . $new_file_name;
+                        
+                        // Hapus file fisik lama jika ada dan bukan seed data bawaan
+                        if (!empty($event['gambar'])) {
+                            $old_file_path = '../' . $event['gambar'];
+                            $seed_images = ['parentsday.webp', 'department_fair.webp', '17_an.webp', 'obor.webp', 'krida.webp', 'mcr.webp', 'study_skills.webp', 'lk_days.webp', 'inaugurasi.webp'];
+                            $old_filename = basename($event['gambar']);
+                            if (file_exists($old_file_path) && !in_array($old_filename, $seed_images)) {
+                                unlink($old_file_path);
+                            }
+                        }
+                        $gambar = $gambar_baru;
+                    } else {
+                        $error = 'Gagal memindahkan file baru.';
+                    }
+                } else {
+                    $error = 'Ukuran file gambar maksimal 2MB.';
+                }
+            } else {
+                $error = 'Format file tidak valid.';
+            }
+        }
+
+        if ($error === '') {
+            $sql  = "UPDATE events SET nama_event=?, deskripsi=?, tanggal=?, lokasi=?, gambar=?, urutan=? WHERE id=?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 'sssssii', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan, $id);
+            if (mysqli_stmt_execute($stmt)) {
+                header("Location: events_list.php?status=diedit"); exit;
+            } else {
+                $error = 'Gagal menyimpan perubahan ke database.';
+            }
+        }
+    }
+}
+?>
+```
+
+#### Hapus Data — `events_hapus.php` (Menghapus File Fisik Server)
+
+```php
+<?php
+session_start();
+if (!isset($_SESSION['admin_id'])) { header("Location: login.php"); exit; }
+include '../koneksi.php';
+
+$id = intval($_GET['id']);
+
+if ($id > 0) {
+    // 1. Ambil path gambar untuk dihapus fisiknya dari server
+    $sql_select = "SELECT gambar FROM events WHERE id = ?";
+    $stmt_select = mysqli_prepare($conn, $sql_select);
+    mysqli_stmt_bind_param($stmt_select, 'i', $id);
+    mysqli_stmt_execute($stmt_select);
+    $result = mysqli_stmt_get_result($stmt_select);
+    $event = mysqli_fetch_assoc($result);
+    
+    if ($event && !empty($event['gambar'])) {
+        $file_path = '../' . $event['gambar'];
+        $seed_images = ['parentsday.webp', 'department_fair.webp', '17_an.webp', 'obor.webp', 'krida.webp', 'mcr.webp', 'study_skills.webp', 'lk_days.webp', 'inaugurasi.webp'];
+        $filename = basename($event['gambar']);
+        // Hapus file fisik jika bukan seed data bawaan
+        if (file_exists($file_path) && !in_array($filename, $seed_images)) {
+            unlink($file_path);
+        }
+    }
+
+    // 2. Hapus data dari database
+    $stmt = mysqli_prepare($conn, "DELETE FROM events WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+}
+
 header("Location: events_list.php?status=dihapus");
 exit;
 ?>
@@ -838,44 +941,96 @@ exit;
 
 ## 9. Panduan Per Halaman
 
-### `contact.php` — Form Kontak
+### `contact.php` — Form Kontak (Dengan Captcha JavaScript Keamanan)
 
-Form kontak menyimpan pesan ke tabel `pesan_kontak`. Berikut pola yang digunakan:
+Form kontak digunakan untuk mengirimkan pesan maba publik ke database. Halaman ini memiliki validasi keamanan **Captcha client-side sederhana** menggunakan JavaScript untuk menghindari spamming bot.
 
 ```php
 <?php
 include 'koneksi.php';
 
 $status = '';
+$error  = '';
 
-// Cek apakah ada notifikasi dari redirect sebelumnya
 if (isset($_GET['status']) && $_GET['status'] === 'sukses') {
     $status = 'sukses';
 }
 
-// Proses pengiriman pesan
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama    = trim($_POST['nama']);
-    $telepon = trim($_POST['nomor_telepon']);
-    $email   = trim($_POST['email']);
-    $pesan   = trim($_POST['pesan']);
+    $nama    = trim($_POST['nama'] ?? '');
+    $telepon = trim($_POST['nomor_telepon'] ?? '');
+    $email   = trim($_POST['email'] ?? '');
+    $pesan   = trim($_POST['pesan'] ?? '');
 
-    // Validasi sederhana — pastikan field penting tidak kosong
-    if ($nama !== '' && $email !== '' && $pesan !== '') {
+    if ($nama === '' || $email === '' || $pesan === '') {
+        $error = 'Nama, email, dan pesan wajib diisi.';
+    } else {
         $sql  = "INSERT INTO pesan_kontak (nama, nomor_telepon, email, pesan) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, 'ssss', $nama, $telepon, $email, $pesan);
-        mysqli_stmt_execute($stmt);
-
-        // Redirect untuk mencegah form dikirim ulang saat refresh
-        header("Location: contact.php?status=sukses");
-        exit;
+        if (mysqli_stmt_execute($stmt)) {
+            header("Location: contact.php?status=sukses"); exit;
+        } else {
+            $error = 'Gagal menyimpan pesan.';
+        }
     }
 }
-
-mysqli_close($conn);
 ?>
-<!-- HTML form contact dengan pesan sukses jika $status === 'sukses' -->
+<!-- HTML Form dengan Captcha Container -->
+<form method="POST" action="contact.php">
+  <input type="text" name="nama" required>
+  <input type="email" name="email" required>
+  <textarea name="pesan" required></textarea>
+
+  <!-- Captcha Section -->
+  <div class="mb-3">
+    <label class="form-label">Keamanan (Captcha) <span class="text-danger">*</span></label>
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <!-- Wadah kode Captcha -->
+      <div id="captchaBox" class="border rounded px-3 py-2 fw-bold text-center user-select-none" 
+           style="background-color: #f1f3f5; font-family: monospace; font-size: 1.25rem; letter-spacing: 4px; text-decoration: line-through; font-style: italic; color: #495057; width: 140px;">
+      </div>
+      <button type="button" class="btn btn-outline-secondary btn-sm" id="btnRefreshCaptcha" title="Refresh Captcha">
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
+    </div>
+    <input type="text" id="captchaInput" class="form-control" placeholder="Masukkan kode di atas" required autocomplete="off">
+    <div id="captchaError" class="text-danger small mt-1" style="display: none;">Kode captcha tidak sesuai!</div>
+  </div>
+
+  <button type="submit">Kirim Pesan</button>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var captchaText = '';
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  
+  // Me-generate kode Captcha acak
+  function generateCaptcha() {
+    captchaText = '';
+    for (var i = 0; i < 5; i++) {
+      captchaText += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    document.getElementById('captchaBox').innerText = captchaText;
+    document.getElementById('captchaInput').value = '';
+    document.getElementById('captchaError').style.display = 'none';
+  }
+  
+  generateCaptcha();
+  document.getElementById('btnRefreshCaptcha').addEventListener('click', generateCaptcha);
+  
+  // Mencegah form submit jika input Captcha salah (case-insensitive)
+  document.querySelector('form').addEventListener('submit', function(event) {
+    var userInput = document.getElementById('captchaInput').value.trim();
+    if (userInput.toLowerCase() !== captchaText.toLowerCase()) {
+      event.preventDefault();
+      document.getElementById('captchaError').style.display = 'block';
+      document.getElementById('captchaInput').focus();
+    }
+  });
+});
+</script>
 ```
 
 ### `testimonials.php` — Halaman Testimonial

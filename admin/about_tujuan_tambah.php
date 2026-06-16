@@ -6,14 +6,56 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $judul    = trim($_POST['judul']);
     $deskripsi = trim($_POST['deskripsi']);
-    $gambar   = trim($_POST['gambar']);
+    $gambar   = '';
     $urutan   = intval($_POST['urutan']);
-    if ($judul === '') { $error = 'Judul wajib diisi.'; }
-    else {
-        $stmt = mysqli_prepare($conn, "INSERT INTO about_tujuan (judul, deskripsi, gambar, urutan) VALUES (?, ?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, 'sssi', $judul, $deskripsi, $gambar, $urutan);
-        if (mysqli_stmt_execute($stmt)) { header("Location: about_tujuan_list.php?status=ditambah"); exit; }
-        else { $error = 'Gagal menyimpan.'; }
+    
+    if ($judul === '') { 
+        $error = 'Judul wajib diisi.'; 
+    } else {
+        // Proses upload file gambar jika ada file yang diunggah
+        if (isset($_FILES['gambar_file']) && $_FILES['gambar_file']['error'] === UPLOAD_ERR_OK) {
+            $file_tmpPath = $_FILES['gambar_file']['tmp_name'];
+            $file_name = $_FILES['gambar_file']['name'];
+            $file_size = $_FILES['gambar_file']['size'];
+            
+            $file_name_cmps = explode(".", $file_name);
+            $file_ext = strtolower(end($file_name_cmps));
+            
+            $allowed_exts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            if (in_array($file_ext, $allowed_exts)) {
+                if ($file_size <= 2097152) { // Batasi 2MB
+                    $new_file_name = time() . '_' . md5(uniqid()) . '.' . $file_ext;
+                    $upload_dir = '../assets/images/gallery/';
+                    
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0755, true);
+                    }
+                    
+                    $dest_path = $upload_dir . $new_file_name;
+                    if (move_uploaded_file($file_tmpPath, $dest_path)) {
+                        $gambar = 'assets/images/gallery/' . $new_file_name;
+                    } else {
+                        $error = 'Gagal memindahkan file gambar ke direktori tujuan.';
+                    }
+                } else {
+                    $error = 'Ukuran file gambar maksimal 2MB.';
+                }
+            } else {
+                $error = 'Format file tidak valid. Hanya JPG, JPEG, PNG, GIF, dan WEBP.';
+            }
+        } else {
+            $error = 'File gambar wajib diunggah.';
+        }
+
+        if ($error === '') {
+            $stmt = mysqli_prepare($conn, "INSERT INTO about_tujuan (judul, deskripsi, gambar, urutan) VALUES (?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, 'sssi', $judul, $deskripsi, $gambar, $urutan);
+            if (mysqli_stmt_execute($stmt)) { 
+                header("Location: about_tujuan_list.php?status=ditambah"); exit; 
+            } else { 
+                $error = 'Gagal menyimpan data ke database. Coba lagi.'; 
+            }
+        }
     }
 }
 ?>
@@ -34,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
   <?php if ($error): ?><div class="alert alert-danger"><?= htmlspecialchars($error) ?></div><?php endif; ?>
   <div class="form-card">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       <div class="mb-3">
         <label class="form-label fw-semibold">Judul <span class="text-danger">*</span></label>
         <input type="text" name="judul" class="form-control" placeholder="Contoh: Transisi Akademik" required>
@@ -44,11 +86,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <textarea name="deskripsi" class="form-control" rows="3" placeholder="Penjelasan tujuan program..."></textarea>
       </div>
       <div class="mb-3">
-        <label class="form-label fw-semibold">Path Gambar</label>
-        <input type="text" name="gambar" class="form-control" placeholder="assets/images/gallery/tujuan_transisi.webp"
-               oninput="previewGambar(this.value)">
-        <div class="form-text">Path relatif ke gambar di folder <code>assets/</code></div>
-        <img id="previewImg" src="" alt="Preview" class="gambar-preview" style="display:none;">
+        <label class="form-label fw-semibold">Gambar Tujuan Program <span class="text-danger">*</span></label>
+        <input type="file" name="gambar_file" id="inputGambar" class="form-control" accept="image/*" required onchange="previewFile(this)">
+        <div class="form-text">Pilih file gambar (Format: JPG, JPEG, PNG, GIF, WEBP. Maks: 2MB)</div>
+        <img id="previewImg" src="" alt="Preview" class="gambar-preview" style="display:none; max-height:180px; margin-top:10px;">
       </div>
       <div class="mb-4">
         <label class="form-label fw-semibold">Urutan</label>
@@ -62,10 +103,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 </div>
 <script>
-function previewGambar(path) {
-  var img = document.getElementById('previewImg');
-  if (path.trim()) { img.src = '../' + path.trim(); img.style.display='block'; img.onerror=()=>{img.style.display='none'}; }
-  else { img.style.display='none'; }
+// Fungsi untuk mem-preview gambar lokal yang dipilih oleh user
+function previewFile(input) {
+  var preview = document.getElementById('previewImg');
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    }
+    reader.readAsDataURL(input.files[0]);
+  } else {
+    preview.style.display = 'none';
+  }
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

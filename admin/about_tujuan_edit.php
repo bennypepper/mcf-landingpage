@@ -12,14 +12,65 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $judul     = trim($_POST['judul']);
     $deskripsi = trim($_POST['deskripsi']);
-    $gambar    = trim($_POST['gambar']);
+    $gambar    = $t['gambar']; // default pakai gambar lama
     $urutan    = intval($_POST['urutan']);
-    if ($judul === '') { $error = 'Judul wajib diisi.'; }
-    else {
-        $stmt = mysqli_prepare($conn, "UPDATE about_tujuan SET judul=?, deskripsi=?, gambar=?, urutan=? WHERE id=?");
-        mysqli_stmt_bind_param($stmt, 'sssii', $judul, $deskripsi, $gambar, $urutan, $id);
-        mysqli_stmt_execute($stmt);
-        header("Location: about_tujuan_list.php?status=diedit"); exit;
+    
+    if ($judul === '') { 
+        $error = 'Judul wajib diisi.'; 
+    } else {
+        // Cek apakah ada file baru yang diunggah
+        if (isset($_FILES['gambar_file']) && $_FILES['gambar_file']['error'] === UPLOAD_ERR_OK) {
+            $file_tmpPath = $_FILES['gambar_file']['tmp_name'];
+            $file_name = $_FILES['gambar_file']['name'];
+            $file_size = $_FILES['gambar_file']['size'];
+            
+            $file_name_cmps = explode(".", $file_name);
+            $file_ext = strtolower(end($file_name_cmps));
+            
+            $allowed_exts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            if (in_array($file_ext, $allowed_exts)) {
+                if ($file_size <= 2097152) { // Batasi 2MB
+                    $new_file_name = time() . '_' . md5(uniqid()) . '.' . $file_ext;
+                    $upload_dir = '../assets/images/gallery/';
+                    
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0755, true);
+                    }
+                    
+                    $dest_path = $upload_dir . $new_file_name;
+                    if (move_uploaded_file($file_tmpPath, $dest_path)) {
+                        $gambar_baru = 'assets/images/gallery/' . $new_file_name;
+                        
+                        // Hapus file lama jika ada dan bukan seed data bawaan
+                        if (!empty($t['gambar'])) {
+                            $old_file_path = '../' . $t['gambar'];
+                            $seed_images = ['tujuan_transisi.webp', 'tujuan_koneksi.webp', 'tujuan_nilai.webp'];
+                            $old_filename = basename($t['gambar']);
+                            if (file_exists($old_file_path) && !in_array($old_filename, $seed_images)) {
+                                unlink($old_file_path);
+                            }
+                        }
+                        $gambar = $gambar_baru;
+                    } else {
+                        $error = 'Gagal memindahkan file gambar ke direktori tujuan.';
+                    }
+                } else {
+                    $error = 'Ukuran file gambar maksimal 2MB.';
+                }
+            } else {
+                $error = 'Format file tidak valid. Hanya JPG, JPEG, PNG, GIF, dan WEBP.';
+            }
+        }
+
+        if ($error === '') {
+            $stmt = mysqli_prepare($conn, "UPDATE about_tujuan SET judul=?, deskripsi=?, gambar=?, urutan=? WHERE id=?");
+            mysqli_stmt_bind_param($stmt, 'sssii', $judul, $deskripsi, $gambar, $urutan, $id);
+            if (mysqli_stmt_execute($stmt)) {
+                header("Location: about_tujuan_list.php?status=diedit"); exit;
+            } else {
+                $error = 'Gagal menyimpan perubahan ke database. Coba lagi.';
+            }
+        }
     }
 }
 ?>
@@ -40,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
   <?php if ($error): ?><div class="alert alert-danger"><?= htmlspecialchars($error) ?></div><?php endif; ?>
   <div class="form-card">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       <div class="mb-3">
         <label class="form-label fw-semibold">Judul <span class="text-danger">*</span></label>
         <input type="text" name="judul" class="form-control" value="<?= htmlspecialchars($t['judul']) ?>" required>
@@ -50,15 +101,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <textarea name="deskripsi" class="form-control" rows="3"><?= htmlspecialchars($t['deskripsi']) ?></textarea>
       </div>
       <div class="mb-3">
-        <label class="form-label fw-semibold">Path Gambar</label>
-        <input type="text" name="gambar" class="form-control" value="<?= htmlspecialchars($t['gambar'] ?? '') ?>"
-               oninput="previewGambar(this.value)">
-        <div class="form-text">Path relatif ke gambar di folder <code>assets/</code></div>
-        <?php if (!empty($t['gambar'])): ?>
-          <img id="previewImg" src="../<?= htmlspecialchars($t['gambar']) ?>" alt="Preview" class="gambar-preview">
-        <?php else: ?>
-          <img id="previewImg" src="" alt="Preview" class="gambar-preview" style="display:none;">
-        <?php endif; ?>
+        <label class="form-label fw-semibold">Ganti Gambar Tujuan Program</label>
+        <input type="file" name="gambar_file" id="inputGambar" class="form-control" accept="image/*" onchange="previewFile(this)">
+        <div class="form-text">Biarkan kosong jika tidak ingin mengganti gambar. (Format: JPG, JPEG, PNG, GIF, WEBP. Maks: 2MB)</div>
+        
+        <div class="mt-2">
+          <span class="small text-muted d-block mb-1">Gambar saat ini:</span>
+          <?php if (!empty($t['gambar'])): ?>
+            <img id="previewImg" src="../<?= htmlspecialchars($t['gambar']) ?>" alt="Preview" class="gambar-preview" style="max-height:180px;">
+          <?php else: ?>
+            <img id="previewImg" src="" alt="Preview" class="gambar-preview" style="display:none; max-height:180px;">
+          <?php endif; ?>
+        </div>
       </div>
       <div class="mb-4">
         <label class="form-label fw-semibold">Urutan</label>
@@ -72,10 +126,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 </div>
 <script>
-function previewGambar(path) {
-  var img = document.getElementById('previewImg');
-  if (path.trim()) { img.src = '../' + path.trim(); img.style.display='block'; img.onerror=()=>{img.style.display='none'}; }
-  else { img.style.display='none'; }
+// Fungsi untuk mem-preview gambar lokal yang dipilih oleh user
+function previewFile(input) {
+  var preview = document.getElementById('previewImg');
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

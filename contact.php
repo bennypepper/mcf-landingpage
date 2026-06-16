@@ -187,6 +187,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <label class="form-label">Pesan <span class="text-danger">*</span></label>
               <textarea name="pesan" class="form-control" rows="4" placeholder="Tuliskan pesanmu di sini..." required></textarea>
             </div>
+            <!-- Bagian Captcha Keamanan -->
+            <div class="mb-3">
+              <label class="form-label">Keamanan (Captcha) <span class="text-danger">*</span></label>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <div id="captchaBox" class="border rounded px-3 py-2 fw-bold text-center user-select-none" 
+                     style="background-color: #f1f3f5; font-family: monospace; font-size: 1.25rem; letter-spacing: 4px; text-decoration: line-through; font-style: italic; color: #495057; width: 140px;">
+                  <!-- Kode captcha di-generate oleh JS -->
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnRefreshCaptcha" title="Refresh Captcha">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+              </div>
+              <input type="text" id="captchaInput" class="form-control" placeholder="Masukkan kode di atas" style="max-width: 200px;" required autocomplete="off">
+              <div id="captchaError" class="text-danger small mt-1" style="display: none;">
+                <i class="bi bi-exclamation-circle me-1"></i>Kode captcha tidak sesuai!
+              </div>
+            </div>
             <button type="submit" class="btn btn-primary px-4">
               <i class="bi bi-send me-1"></i> Kirim Pesan
             </button>
@@ -209,5 +226,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Tunggu DOM selesai dimuat
+document.addEventListener("DOMContentLoaded", function() {
+  var captchaText = '';
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  
+  // Fungsi untuk me-generate kode captcha acak (5 karakter)
+  function generateCaptcha() {
+    captchaText = '';
+    for (var i = 0; i < 5; i++) {
+      captchaText += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    document.getElementById('captchaBox').innerText = captchaText;
+    document.getElementById('captchaInput').value = '';
+    document.getElementById('captchaError').style.display = 'none';
+  }
+  
+  // Generate captcha pertama kali saat halaman dibuka
+  generateCaptcha();
+  
+  // Hubungkan tombol refresh untuk me-generate ulang captcha
+  document.getElementById('btnRefreshCaptcha').addEventListener('click', generateCaptcha);
+  
+  // Handler submit form untuk memvalidasi input captcha secara client-side
+  var form = document.querySelector('form');
+  form.addEventListener('submit', function(event) {
+    var userInput = document.getElementById('captchaInput').value.trim();
+    
+    // Verifikasi case-insensitive
+    if (userInput.toLowerCase() !== captchaText.toLowerCase()) {
+      event.preventDefault(); // Batalkan pengiriman form
+      document.getElementById('captchaError').style.display = 'block'; // Tampilkan pesan error
+      document.getElementById('captchaInput').focus();
+    }
+  });
+});
+</script>
 </body>
 </html>
