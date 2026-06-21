@@ -54,9 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Simpan ke database jika tidak ada error upload
         if ($error === '') {
-            $sql  = "INSERT INTO events (nama_event, deskripsi, tanggal, lokasi, gambar, urutan) VALUES (?, ?, ?, ?, ?, ?)";
+            $admin_id = $_SESSION['admin_id'];
+            $sql  = "INSERT INTO events (nama_event, deskripsi, tanggal, lokasi, gambar, urutan, admin_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'sssssi', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan);
+            mysqli_stmt_bind_param($stmt, 'sssssii', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan, $admin_id);
             if (mysqli_stmt_execute($stmt)) {
                 header("Location: events_list.php?status=ditambah"); exit;
             } else {

@@ -3,7 +3,7 @@ session_start();
 if (!isset($_SESSION['admin_id'])) { header("Location: login.php"); exit; }
 include '../koneksi.php';
 $rows = [];
-$r = mysqli_query($conn, "SELECT * FROM about_statistik ORDER BY urutan ASC");
+$r = mysqli_query($conn, "SELECT about_statistik.*, admin.nama_lengkap AS nama_admin FROM about_statistik LEFT JOIN admin ON about_statistik.admin_id = admin.id ORDER BY about_statistik.urutan ASC");
 while ($row = mysqli_fetch_assoc($r)) { $rows[] = $row; }
 $notif = '';
 if (isset($_GET['status'])) {
@@ -48,7 +48,10 @@ if (isset($_GET['status'])) {
             <tr>
               <td class="text-muted small"><?= $i+1 ?></td>
               <td><span class="fw-bold text-primary fs-5"><?= htmlspecialchars($s['angka']) ?></span></td>
-              <td><?= htmlspecialchars($s['label']) ?></td>
+              <td>
+                <?= htmlspecialchars($s['label']) ?>
+                <span class="d-block text-muted" style="font-size: 0.72rem;">Oleh: <?= htmlspecialchars($s['nama_admin'] ?? 'Sistem') ?></span>
+              </td>
               <td class="small"><?= (int)$s['urutan'] ?></td>
               <td>
                 <a href="about_stat_edit.php?id=<?= $s['id'] ?>" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil"></i></a>

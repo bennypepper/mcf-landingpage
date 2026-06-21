@@ -3,7 +3,24 @@ session_start();
 if (!isset($_SESSION['admin_id'])) { header("Location: login.php"); exit; }
 include '../koneksi.php';
 
-$sql    = "SELECT * FROM pesan_kontak ORDER BY dikirim_pada DESC";
+// --- KONFIGURASI PAGINATION ---
+$limit = 5; // Jumlah data per halaman
+$page  = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
+$offset = ($page - 1) * $limit;
+
+// Menghitung total data
+$sql_total    = "SELECT COUNT(id) AS total FROM pesan_kontak";
+$result_total = mysqli_query($conn, $sql_total);
+$row_total    = mysqli_fetch_assoc($result_total);
+$total_data   = $row_total['total'];
+
+// Menghitung total halaman
+$total_pages  = ceil($total_data / $limit);
+// ------------------------------
+
+// Ambil data pesan JOIN admin
+$sql    = "SELECT pesan_kontak.*, admin.nama_lengkap AS nama_admin FROM pesan_kontak LEFT JOIN admin ON pesan_kontak.dibaca_oleh = admin.id ORDER BY pesan_kontak.dikirim_pada DESC LIMIT $limit OFFSET $offset";
 $result = mysqli_query($conn, $sql);
 $pesans = [];
 while ($row = mysqli_fetch_assoc($result)) { $pesans[] = $row; }
@@ -44,15 +61,21 @@ if (isset($_GET['status'])) {
     <?php if (empty($pesans)): ?>
       <div class="text-center py-5 text-muted"><i class="bi bi-inbox" style="font-size:2.5rem;"></i><p class="mt-2">Belum ada pesan masuk.</p></div>
     <?php else: ?>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
+      
+      <div class="mb-3 d-flex justify-content-between align-items-center">
+        <input type="text" id="searchInput" class="form-control w-50" placeholder="Cari berdasarkan nama atau isi pesan..." onkeyup="filterTable()">
+        <span class="text-muted small">Total: <?= $total_data ?> Pesan</span>
+      </div>
+
+      <div class="table-responsive mb-3">
+        <table class="table table-hover align-middle" id="pesanTable">
           <thead class="table-light">
             <tr><th>#</th><th>Pengirim</th><th>Email</th><th>Telepon</th><th>Pesan</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr>
           </thead>
           <tbody>
             <?php foreach ($pesans as $i => $p): ?>
               <tr class="<?= $p['sudah_dibaca'] == 0 ? 'tr-baru' : '' ?>">
-                <td class="text-muted small"><?= $i+1 ?></td>
+                <td class="text-muted small"><?= $offset + $i + 1 ?></td>
                 <td class="fw-semibold small"><?= htmlspecialchars($p['nama']) ?></td>
                 <td class="small text-muted"><?= htmlspecialchars($p['email']) ?></td>
                 <td class="small text-muted"><?= htmlspecialchars($p['nomor_telepon'] ?? '-') ?></td>
@@ -63,6 +86,9 @@ if (isset($_GET['status'])) {
                     <span class="badge bg-danger">Baru</span>
                   <?php else: ?>
                     <span class="badge bg-secondary">Dibaca</span>
+                    <?php if (!empty($p['nama_admin'])): ?>
+                      <span class="d-block text-muted mt-1" style="font-size:0.68rem; font-weight:normal;">Oleh: <?= htmlspecialchars($p['nama_admin']) ?></span>
+                    <?php endif; ?>
                   <?php endif; ?>
                 </td>
                 <td style="white-space:nowrap;">
@@ -113,8 +139,51 @@ if (isset($_GET['status'])) {
           </tbody>
         </table>
       </div>
+
+      <?php if ($total_pages > 1): ?>
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-end">
+          <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+            <a class="page-link" href="?page=<?= $page - 1 ?>">Previous</a>
+          </li>
+          <?php for($i = 1; $i <= $total_pages; $i++): ?>
+            <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
+              <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+            </li>
+          <?php endfor; ?>
+          <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+            <a class="page-link" href="?page=<?= $page + 1 ?>">Next</a>
+          </li>
+        </ul>
+      </nav>
+      <?php endif; ?>
+
     <?php endif; ?>
   </div>
 </div>
+
+<script>
+function filterTable() {
+  var input, filter, table, tr, tdSender, tdPesan, i, txtSender, txtPesan;
+  input = document.getElementById("searchInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("pesanTable");
+  tr = table.getElementsByTagName("tr");
+
+  for (i = 1; i < tr.length; i++) {
+    tdSender = tr[i].getElementsByTagName("td")[1]; 
+    tdPesan = tr[i].getElementsByTagName("td")[4];
+    if (tdSender && tdPesan) {
+      txtSender = tdSender.textContent || tdSender.innerText;
+      txtPesan = tdPesan.textContent || tdPesan.innerText;
+      if (txtSender.toUpperCase().indexOf(filter) > -1 || txtPesan.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; 
+      } else {
+        tr[i].style.display = "none"; 
+      }
+    }       
+  }
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body></html>

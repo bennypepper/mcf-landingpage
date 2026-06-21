@@ -74,9 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Simpan ke database jika tidak ada error
         if ($error === '') {
-            $sql  = "UPDATE events SET nama_event=?, deskripsi=?, tanggal=?, lokasi=?, gambar=?, urutan=? WHERE id=?";
+            $admin_id = $_SESSION['admin_id'];
+            $sql  = "UPDATE events SET nama_event=?, deskripsi=?, tanggal=?, lokasi=?, gambar=?, urutan=?, admin_id=? WHERE id=?";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'sssssii', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan, $id);
+            mysqli_stmt_bind_param($stmt, 'sssssiii', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan, $admin_id, $id);
             if (mysqli_stmt_execute($stmt)) {
                 header("Location: events_list.php?status=diedit"); exit;
             } else {

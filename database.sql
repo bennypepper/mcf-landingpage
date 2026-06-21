@@ -7,6 +7,14 @@
 CREATE DATABASE IF NOT EXISTS `mcf_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `mcf_db`;
 
+-- Drop tabel lama jika ada (berurutan berdasarkan foreign key)
+DROP TABLE IF EXISTS `about_tujuan`;
+DROP TABLE IF EXISTS `about_statistik`;
+DROP TABLE IF EXISTS `pesan_kontak`;
+DROP TABLE IF EXISTS `testimonials`;
+DROP TABLE IF EXISTS `events`;
+DROP TABLE IF EXISTS `admin`;
+
 -- ============================================================
 -- TABEL: admin
 -- ============================================================
@@ -29,7 +37,9 @@ CREATE TABLE IF NOT EXISTS `events` (
   `lokasi` VARCHAR(200),
   `gambar` VARCHAR(255) COMMENT 'Path relatif ke file gambar, contoh: assets/images/events/parentsday.webp',
   `urutan` INT DEFAULT 0,
-  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `admin_id` INT NULL,
+  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_events_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
@@ -43,7 +53,9 @@ CREATE TABLE IF NOT EXISTS `testimonials` (
   `isi_testimoni` TEXT NOT NULL,
   `foto` VARCHAR(255) COMMENT 'Path relatif ke file foto, contoh: assets/images/testimonials/testi1.webp',
   `tampilkan` TINYINT(1) DEFAULT 1 COMMENT '1 = tampilkan, 0 = sembunyikan',
-  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `admin_id` INT NULL,
+  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_testimonials_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
@@ -56,7 +68,9 @@ CREATE TABLE IF NOT EXISTS `pesan_kontak` (
   `email` VARCHAR(150) NOT NULL,
   `pesan` TEXT NOT NULL,
   `sudah_dibaca` TINYINT(1) DEFAULT 0 COMMENT '0 = belum dibaca, 1 = sudah dibaca',
-  `dikirim_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `dibaca_oleh` INT NULL,
+  `dikirim_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_pesan_admin` FOREIGN KEY (`dibaca_oleh`) REFERENCES `admin` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
@@ -68,7 +82,9 @@ CREATE TABLE IF NOT EXISTS `about_statistik` (
   `angka` VARCHAR(20) NOT NULL COMMENT 'Contoh: 9+, 1000+, 12',
   `label` VARCHAR(100) NOT NULL COMMENT 'Contoh: Tahun Penyelenggaraan',
   `urutan` INT DEFAULT 0,
-  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `admin_id` INT NULL,
+  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_statistik_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
@@ -81,16 +97,18 @@ CREATE TABLE IF NOT EXISTS `about_tujuan` (
   `deskripsi` TEXT,
   `gambar` VARCHAR(255) COMMENT 'Path relatif ke file gambar, contoh: assets/images/gallery/tujuan_transisi.webp',
   `urutan` INT DEFAULT 0,
-  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `admin_id` INT NULL,
+  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_tujuan_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
 -- DATA AWAL (Seed Data)
 -- ============================================================
 
--- Admin default — password: admin123
+-- Admin default — password: admin123 (MD5 hash)
 INSERT INTO `admin` (`username`, `password`, `nama_lengkap`) VALUES
-('admin', '$2y$10$tNlL/TVY58gspYFJTpgStOhhimczHlJ/xuNuEJsc7F4.78PQEfHri', 'Admin MCF');
+('admin', '0192023a7bbd73250516f069df18b500', 'Admin MCF');
 
 -- Data events
 INSERT INTO `events` (`nama_event`, `deskripsi`, `tanggal`, `lokasi`, `gambar`, `urutan`) VALUES

@@ -48,8 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($error === '') {
-            $stmt = mysqli_prepare($conn, "INSERT INTO about_tujuan (judul, deskripsi, gambar, urutan) VALUES (?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmt, 'sssi', $judul, $deskripsi, $gambar, $urutan);
+            $admin_id = $_SESSION['admin_id'];
+            $stmt = mysqli_prepare($conn, "INSERT INTO about_tujuan (judul, deskripsi, gambar, urutan, admin_id) VALUES (?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, 'sssii', $judul, $deskripsi, $gambar, $urutan, $admin_id);
             if (mysqli_stmt_execute($stmt)) { 
                 header("Location: about_tujuan_list.php?status=ditambah"); exit; 
             } else { 

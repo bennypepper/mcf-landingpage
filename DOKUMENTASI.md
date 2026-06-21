@@ -139,7 +139,7 @@ mcf-landingpage/
 
 ## 4. Database — Tabel dan Relasinya
 
-Database bernama `mcf_db` berisi 6 tabel. Setiap tabel menyimpan konten untuk bagian website tertentu.
+Database bernama `mcf_db` berisi 6 tabel yang saling terhubung menggunakan relasi kunci tamu (`FOREIGN KEY`) ke tabel `admin` untuk mencatat admin yang mengelola data tersebut (memenuhi > 2 relasi database).
 
 ### Tabel `admin`
 Menyimpan akun yang bisa login ke admin panel.
@@ -164,6 +164,7 @@ Menyimpan semua event/kegiatan MCF.
 | `lokasi` | VARCHAR(200) | Tempat kegiatan |
 | `gambar` | VARCHAR(255) | Path ke file gambar, contoh: `assets/images/events/parentsday.webp` |
 | `urutan` | INT | Angka urutan tampil (1 = paling atas) |
+| `admin_id` | INT | Kunci Tamu (FK) relasi ke `admin.id` (admin pembuat/pengedit) |
 
 ### Tabel `testimonials` (milik Elroi)
 Menyimpan testimoni peserta MCF.
@@ -177,6 +178,7 @@ Menyimpan testimoni peserta MCF.
 | `isi_testimoni` | TEXT | Isi kutipan testimoni |
 | `foto` | VARCHAR(255) | Path ke foto peserta (boleh kosong) |
 | `tampilkan` | TINYINT(1) | 1 = tampil di website, 0 = disembunyikan |
+| `admin_id` | INT | Kunci Tamu (FK) relasi ke `admin.id` (admin yang mengelola) |
 
 ### Tabel `pesan_kontak` (milik Benny)
 Menyimpan pesan yang dikirim lewat form contact.
@@ -189,6 +191,7 @@ Menyimpan pesan yang dikirim lewat form contact.
 | `email` | VARCHAR(150) | Email pengirim |
 | `pesan` | TEXT | Isi pesan |
 | `sudah_dibaca` | TINYINT(1) | 0 = belum dibaca, 1 = sudah dibaca |
+| `dibaca_oleh` | INT | Kunci Tamu (FK) relasi ke `admin.id` (admin yang membaca) |
 | `dikirim_pada` | TIMESTAMP | Waktu pesan masuk |
 
 ### Tabel `about_statistik` (milik Jennifer)
@@ -200,6 +203,7 @@ Menyimpan kotak angka di halaman About (9+ Tahun, 1000+ Mahasiswa, dll.).
 | `angka` | VARCHAR(20) | Teks angka, contoh: "9+" atau "1000+" |
 | `label` | VARCHAR(100) | Keterangan angka, contoh: "Tahun Penyelenggaraan" |
 | `urutan` | INT | Urutan tampil |
+| `admin_id` | INT | Kunci Tamu (FK) relasi ke `admin.id` (admin yang mengelola) |
 
 ### Tabel `about_tujuan` (milik Jennifer)
 Menyimpan kartu tujuan program di halaman About.
@@ -211,6 +215,7 @@ Menyimpan kartu tujuan program di halaman About.
 | `deskripsi` | TEXT | Penjelasan tujuan |
 | `gambar` | VARCHAR(255) | Path ke gambar kartu |
 | `urutan` | INT | Urutan tampil |
+| `admin_id` | INT | Kunci Tamu (FK) relasi ke `admin.id` (admin yang mengelola) |
 
 ### Catatan Penting: Gambar Disimpan sebagai Path, Bukan File
 
@@ -536,15 +541,15 @@ Ketika admin mengisi form di `login.php` dan klik tombol Login:
 
 1. PHP menerima data POST: `$_POST['username']` dan `$_POST['password']`
 2. Cari baris di tabel `admin` yang punya username tersebut
-3. Kalau ditemukan, verifikasi password dengan `password_verify($password, $admin['password'])`
-   - `password_verify` membandingkan password yang diketik dengan hash yang tersimpan di database
-   - Password di database disimpan dalam bentuk hash (terenkripsi) menggunakan `password_hash()`
+3. Kalau ditemukan, verifikasi password dengan mencocokkan hash MD5: `md5($password) === $admin['password']`
+   - `md5()` membandingkan password yang diinput setelah di-hash dengan hash MD5 yang disimpan di database
+   - Password di database disimpan dalam bentuk MD5 hash (32 karakter)
 4. Kalau cocok → simpan data ke `$_SESSION` → redirect ke dashboard
 5. Kalau tidak cocok → tampilkan pesan error
 
 ```php
-// Verifikasi password
-if ($admin && password_verify($password, $admin['password'])) {
+// Verifikasi password dengan MD5
+if ($admin && md5($password) === $admin['password']) {
     $_SESSION['admin_id']   = $admin['id'];
     $_SESSION['admin_nama'] = $admin['nama_lengkap'];
     header("Location: dashboard.php");
@@ -572,16 +577,13 @@ Login berhasil
        session_destroy() → hancurkan session sepenuhnya
 ```
 
-### Kenapa Harus `password_verify`?
+### Penggunaan MD5 untuk Hashing Password
 
-Password tidak boleh disimpan dalam bentuk teks biasa di database. Kalau database bocor, semua password langsung terbaca. Dengan `password_hash()`, password diubah menjadi string acak panjang (hash) yang tidak bisa dikembalikan ke bentuk aslinya.
+Password disimpan dalam bentuk hash MD5 di database untuk memenuhi ketentuan kriteria penilaian project. Saat admin melakukan login, password yang diinputkan akan di-hash dengan `md5()` lalu dicocokkan dengan hash MD5 yang disimpan di database.
 
 ```
 Password asli:   admin123
-Password di DB:  $2y$10$tNlL/TVY58gspYFJTpgStOhhimczHlJ/xuNuEJsc7F4.78PQEfHri
-
-Tidak ada cara untuk "membuka" hash itu kembali ke "admin123".
-password_verify() bekerja dengan cara membandingkan, bukan mendekripsi.
+Password di DB:  0192023a7bbd73250516f069df18b500
 ```
 
 ---

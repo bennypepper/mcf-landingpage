@@ -3,7 +3,7 @@ session_start();
 if (!isset($_SESSION['admin_id'])) { header("Location: login.php"); exit; }
 include '../koneksi.php';
 $rows = [];
-$r = mysqli_query($conn, "SELECT * FROM about_tujuan ORDER BY urutan ASC");
+$r = mysqli_query($conn, "SELECT about_tujuan.*, admin.nama_lengkap AS nama_admin FROM about_tujuan LEFT JOIN admin ON about_tujuan.admin_id = admin.id ORDER BY about_tujuan.urutan ASC");
 while ($row = mysqli_fetch_assoc($r)) { $rows[] = $row; }
 $notif = '';
 if (isset($_GET['status'])) {
@@ -54,7 +54,10 @@ if (isset($_GET['status'])) {
                   <div style="height:44px;width:68px;background:#eef2ff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#2d6abf;"><i class="bi bi-image"></i></div>
                 <?php endif; ?>
               </td>
-              <td class="fw-semibold"><?= htmlspecialchars($t['judul']) ?></td>
+              <td class="fw-semibold">
+                <?= htmlspecialchars($t['judul']) ?>
+                <span class="d-block text-muted" style="font-size: 0.72rem; font-weight: normal;">Oleh: <?= htmlspecialchars($t['nama_admin'] ?? 'Sistem') ?></span>
+              </td>
               <td class="small text-muted"><?= htmlspecialchars(mb_substr($t['deskripsi'], 0, 80)) ?>...</td>
               <td class="small"><?= (int)$t['urutan'] ?></td>
               <td>

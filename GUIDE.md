@@ -307,7 +307,9 @@ CREATE TABLE IF NOT EXISTS `events` (
   `lokasi` VARCHAR(200),
   `gambar` VARCHAR(255),
   `urutan` INT DEFAULT 0,
-  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `admin_id` INT NULL,
+  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_events_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabel testimonials (testimoni peserta)
@@ -319,7 +321,9 @@ CREATE TABLE IF NOT EXISTS `testimonials` (
   `isi_testimoni` TEXT NOT NULL,
   `foto` VARCHAR(255),
   `tampilkan` TINYINT(1) DEFAULT 1,
-  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `admin_id` INT NULL,
+  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_testimonials_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabel pesan_kontak (pesan dari form Contact)
@@ -330,57 +334,43 @@ CREATE TABLE IF NOT EXISTS `pesan_kontak` (
   `email` VARCHAR(150) NOT NULL,
   `pesan` TEXT NOT NULL,
   `sudah_dibaca` TINYINT(1) DEFAULT 0,
-  `dikirim_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `dibaca_oleh` INT NULL,
+  `dikirim_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_pesan_admin` FOREIGN KEY (`dibaca_oleh`) REFERENCES `admin` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabel about_statistik (kotak angka di halaman About — milik Jennifer)
--- Contoh: 9+ Tahun Penyelenggaraan, 1000+ Mahasiswa Baru, dst.
 CREATE TABLE IF NOT EXISTS `about_statistik` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `angka` VARCHAR(20) NOT NULL,
   `label` VARCHAR(100) NOT NULL,
   `urutan` INT DEFAULT 0,
-  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `admin_id` INT NULL,
+  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_statistik_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabel about_tujuan (kartu tujuan program di halaman About — milik Jennifer)
--- Contoh: Transisi Akademik, Koneksi Kolaboratif, Internalisasi Nilai
--- Kolom gambar menyimpan PATH ke file gambar di folder assets/, bukan file-nya sendiri
 CREATE TABLE IF NOT EXISTS `about_tujuan` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `judul` VARCHAR(150) NOT NULL,
   `deskripsi` TEXT,
   `gambar` VARCHAR(255),
   `urutan` INT DEFAULT 0,
-  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `admin_id` INT NULL,
+  `dibuat_pada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_tujuan_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ============================================================
--- CATATAN PENTING: KOLOM GAMBAR DI SEMUA TABEL
--- ============================================================
--- Kolom gambar (VARCHAR) menyimpan PATH relatif menuju file gambar.
--- File gambar fisiknya TIDAK disimpan di database — tetap di folder assets/.
--- Contoh nilai yang benar: 'assets/images/events/parentsday.webp'
--- Contoh nilai yang salah: menyimpan data binary gambar (BLOB)
---
--- Pemetaan kolom gambar per tabel:
---   events.gambar          → assets/images/events/
---   testimonials.foto      → assets/images/testimonials/
---   about_tujuan.gambar    → assets/images/gallery/
--- ============================================================
 
 -- ============================================================
 -- DATA AWAL (Seed Data)
 -- ============================================================
 
 -- Akun admin default
--- Password: admin123
--- PENTING: Hash ini harus di-generate ulang via PHP karena PowerShell memotong karakter $
--- Jalankan script reset_password.php sekali setelah import, atau generate hash via:
--- php -r "echo password_hash('admin123', PASSWORD_DEFAULT);"
--- lalu UPDATE admin SET password = '[hash hasil]' WHERE username = 'admin';
+-- Username: admin, Password: admin123
+-- Menggunakan hash MD5 sesuai ketentuan grading
 INSERT INTO `admin` (`username`, `password`, `nama_lengkap`) VALUES
-('admin', 'GANTI_DENGAN_HASH_DARI_PHP', 'Admin MCF');
+('admin', '0192023a7bbd73250516f069df18b500', 'Admin MCF');
 
 -- Contoh data events
 INSERT INTO `events` (`nama_event`, `deskripsi`, `tanggal`, `lokasi`, `gambar`, `urutan`) VALUES
@@ -401,14 +391,13 @@ INSERT INTO `about_statistik` (`angka`, `label`, `urutan`) VALUES
 ('12',    'Program Studi',         4);
 
 -- Contoh data about_tujuan
--- Kolom gambar berisi path relatif ke file di folder assets/
 INSERT INTO `about_tujuan` (`judul`, `deskripsi`, `gambar`, `urutan`) VALUES
 ('Transisi Akademik',    'Membantu mahasiswa baru mengenal cara kerja kampus, mulai dari sistem akademik hingga fasilitas yang tersedia.', 'assets/images/gallery/tujuan_transisi.webp', 1),
 ('Koneksi Kolaboratif',  'Mengenal mahasiswa dari program studi lain. Pertemanan yang terjalin di MCF sering menjadi ikatan yang bertahan selama masa kuliah.', 'assets/images/gallery/tujuan_koneksi.webp', 2),
 ('Internalisasi Nilai',  'Sejumlah kegiatan berfokus pada nilai-nilai yang dijunjung Universitas Ma Chung, disampaikan melalui aktivitas langsung, bukan sekadar ceramah.', 'assets/images/gallery/tujuan_nilai.webp', 3);
 ```
 
-> **Catatan password admin:** Password default adalah `admin123`. Saat demo, pastikan sudah diganti atau jelaskan ke dosen bahwa ini hanya untuk keperluan testing.
+> **Catatan password admin:** Password default adalah `admin123` dengan MD5 hash `0192023a7bbd73250516f069df18b500` di database.
 
 ---
 
@@ -567,8 +556,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = mysqli_stmt_get_result($stmt);
     $admin  = mysqli_fetch_assoc($result);
 
-    // Cek password
-    if ($admin && password_verify($password, $admin['password'])) {
+    // Cek password (menggunakan MD5 sesuai matriks penilaian)
+    if ($admin && md5($password) === $admin['password']) {
         // Login berhasil — simpan data ke session
         $_SESSION['admin_id']   = $admin['id'];
         $_SESSION['admin_nama'] = $admin['nama_lengkap'];
@@ -775,9 +764,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // 2. Simpan ke database jika tidak ada error upload
         if ($error === '') {
-            $sql  = "INSERT INTO events (nama_event, deskripsi, tanggal, lokasi, gambar, urutan) VALUES (?, ?, ?, ?, ?, ?)";
+            $admin_id = $_SESSION['admin_id'];
+            $sql  = "INSERT INTO events (nama_event, deskripsi, tanggal, lokasi, gambar, urutan, admin_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'sssssi', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan);
+            mysqli_stmt_bind_param($stmt, 'sssssii', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan, $admin_id);
             if (mysqli_stmt_execute($stmt)) {
                 header("Location: events_list.php?status=ditambah"); exit;
             } else {
@@ -883,9 +873,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($error === '') {
-            $sql  = "UPDATE events SET nama_event=?, deskripsi=?, tanggal=?, lokasi=?, gambar=?, urutan=? WHERE id=?";
+            $admin_id = $_SESSION['admin_id'];
+            $sql  = "UPDATE events SET nama_event=?, deskripsi=?, tanggal=?, lokasi=?, gambar=?, urutan=?, admin_id=? WHERE id=?";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'sssssii', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan, $id);
+            mysqli_stmt_bind_param($stmt, 'sssssiii', $nama_event, $deskripsi, $tanggal, $lokasi, $gambar, $urutan, $admin_id, $id);
             if (mysqli_stmt_execute($stmt)) {
                 header("Location: events_list.php?status=diedit"); exit;
             } else {

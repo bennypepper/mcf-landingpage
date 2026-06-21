@@ -9,8 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $urutan = intval($_POST['urutan']);
     if ($angka === '' || $label === '') { $error = 'Angka dan label wajib diisi.'; }
     else {
-        $stmt = mysqli_prepare($conn, "INSERT INTO about_statistik (angka, label, urutan) VALUES (?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, 'ssi', $angka, $label, $urutan);
+        $admin_id = $_SESSION['admin_id'];
+        $stmt = mysqli_prepare($conn, "INSERT INTO about_statistik (angka, label, urutan, admin_id) VALUES (?, ?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, 'ssii', $angka, $label, $urutan, $admin_id);
         if (mysqli_stmt_execute($stmt)) { header("Location: about_stat_list.php?status=ditambah"); exit; }
         else { $error = 'Gagal menyimpan.'; }
     }

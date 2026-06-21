@@ -15,8 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $urutan = intval($_POST['urutan']);
     if ($angka === '' || $label === '') { $error = 'Angka dan label wajib diisi.'; }
     else {
-        $stmt = mysqli_prepare($conn, "UPDATE about_statistik SET angka=?, label=?, urutan=? WHERE id=?");
-        mysqli_stmt_bind_param($stmt, 'ssii', $angka, $label, $urutan, $id);
+        $admin_id = $_SESSION['admin_id'];
+        $stmt = mysqli_prepare($conn, "UPDATE about_statistik SET angka=?, label=?, urutan=?, admin_id=? WHERE id=?");
+        mysqli_stmt_bind_param($stmt, 'ssiii', $angka, $label, $urutan, $admin_id, $id);
         mysqli_stmt_execute($stmt);
         header("Location: about_stat_list.php?status=diedit"); exit;
     }

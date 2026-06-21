@@ -66,8 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($error === '') {
             $angkatan_val = $angkatan !== '' ? intval($angkatan) : null;
-            $stmt = mysqli_prepare($conn, "UPDATE testimonials SET nama=?, prodi=?, angkatan=?, isi_testimoni=?, foto=?, tampilkan=? WHERE id=?");
-            mysqli_stmt_bind_param($stmt, 'ssissii', $nama, $prodi, $angkatan_val, $isi, $foto, $tampil, $id);
+            $admin_id = $_SESSION['admin_id'];
+            $stmt = mysqli_prepare($conn, "UPDATE testimonials SET nama=?, prodi=?, angkatan=?, isi_testimoni=?, foto=?, tampilkan=?, admin_id=? WHERE id=?");
+            mysqli_stmt_bind_param($stmt, 'ssissiii', $nama, $prodi, $angkatan_val, $isi, $foto, $tampil, $admin_id, $id);
             if (mysqli_stmt_execute($stmt)) {
                 header("Location: testimonial_list.php?status=diedit"); exit;
             } else {

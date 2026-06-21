@@ -23,8 +23,8 @@ $total_data   = $row_total['total'];
 $total_pages  = ceil($total_data / $limit);
 // ------------------------------
 
-// Ambil event dengan LIMIT dan OFFSET, diurutkan berdasarkan urutan
-$sql    = "SELECT * FROM events ORDER BY urutan ASC, tanggal ASC LIMIT $limit OFFSET $offset";
+// Ambil event dengan LIMIT dan OFFSET, diurutkan berdasarkan urutan, sertakan nama admin (JOIN)
+$sql    = "SELECT events.*, admin.nama_lengkap AS nama_admin FROM events LEFT JOIN admin ON events.admin_id = admin.id ORDER BY urutan ASC, tanggal ASC LIMIT $limit OFFSET $offset";
 $result = mysqli_query($conn, $sql);
 $events = [];
 while ($row = mysqli_fetch_assoc($result)) { $events[] = $row; }
@@ -95,7 +95,12 @@ if (isset($_GET['status'])) {
             <?php foreach ($events as $i => $ev): ?>
               <tr>
                 <td class="text-muted small"><?= $offset + $i + 1 ?></td>
-                <td class="fw-semibold"><?= htmlspecialchars($ev['nama_event']) ?></td>
+                <td class="fw-semibold">
+                  <?= htmlspecialchars($ev['nama_event']) ?>
+                  <span class="d-block text-muted" style="font-size: 0.72rem; font-weight: normal;">
+                    Dikelola: <?= htmlspecialchars($ev['nama_admin'] ?? 'Sistem') ?>
+                  </span>
+                </td>
                 <td class="small text-muted"><?= date('d M Y', strtotime($ev['tanggal'])) ?></td>
                 <td class="small text-muted"><?= htmlspecialchars($ev['lokasi'] ?? '-') ?></td>
                 <td>

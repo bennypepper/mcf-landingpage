@@ -63,8 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($error === '') {
-            $stmt = mysqli_prepare($conn, "UPDATE about_tujuan SET judul=?, deskripsi=?, gambar=?, urutan=? WHERE id=?");
-            mysqli_stmt_bind_param($stmt, 'sssii', $judul, $deskripsi, $gambar, $urutan, $id);
+            $admin_id = $_SESSION['admin_id'];
+            $stmt = mysqli_prepare($conn, "UPDATE about_tujuan SET judul=?, deskripsi=?, gambar=?, urutan=?, admin_id=? WHERE id=?");
+            mysqli_stmt_bind_param($stmt, 'sssiii', $judul, $deskripsi, $gambar, $urutan, $admin_id, $id);
             if (mysqli_stmt_execute($stmt)) {
                 header("Location: about_tujuan_list.php?status=diedit"); exit;
             } else {

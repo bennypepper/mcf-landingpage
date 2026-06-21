@@ -50,9 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($error === '') {
             // Angkatan boleh kosong — kalau kosong simpan sebagai null
             $angkatan_val = ($angkatan !== '') ? $angkatan : null;
+            $admin_id = $_SESSION['admin_id'];
 
-            $stmt = mysqli_prepare($conn, "INSERT INTO testimonials (nama, prodi, angkatan, isi_testimoni, foto, tampilkan) VALUES (?, ?, ?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmt, 'sssssi', $nama, $prodi, $angkatan_val, $isi, $foto, $tampil);
+            $stmt = mysqli_prepare($conn, "INSERT INTO testimonials (nama, prodi, angkatan, isi_testimoni, foto, tampilkan, admin_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, 'sssssii', $nama, $prodi, $angkatan_val, $isi, $foto, $tampil, $admin_id);
             if (mysqli_stmt_execute($stmt)) { 
                 header("Location: testimonial_list.php?status=ditambah"); exit; 
             } else { 
