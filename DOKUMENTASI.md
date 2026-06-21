@@ -426,20 +426,23 @@ Untuk preview gambar sebelum diunggah pada form tambah/edit, sistem menggunakan 
 
 **Tanggung jawab:** Halaman utama website yang menjadi kesan pertama pengunjung.
 
-**Tabel yang dipegang:** Tidak punya tabel sendiri. Membaca dari tabel `events` (James) dan `testimonials` (Elroi).
+**Tabel yang dipegang:** Tidak punya tabel sendiri. Membaca dari tabel `events` (James), `testimonials` (Elroi), dan `about_statistik` (Jennifer).
 
 #### `index.php`
-Halaman ini merangkum isi website: ada hero section, preview beberapa event, dan preview testimoni. Karena bukan halaman detail, datanya dibatasi:
+Halaman ini merangkum isi website: ada hero section, preview beberapa event, preview testimoni, dan teaser info statistik. Karena bukan halaman detail, datanya dibatasi:
 
 ```sql
--- Ambil hanya 3 event terdekat untuk ditampilkan sebagai preview
-SELECT * FROM events ORDER BY urutan ASC, tanggal ASC LIMIT 3
+-- Ambil 4 event pertama untuk ditampilkan di preview (diurutkan berdasarkan urutan)
+SELECT * FROM events ORDER BY urutan ASC LIMIT 4
 
 -- Ambil hanya 1 testimoni untuk teaser di halaman home
 SELECT * FROM testimonials WHERE tampilkan = 1 ORDER BY dibuat_pada DESC LIMIT 1
+
+-- Ambil data statistik untuk ditampilkan di teaser
+SELECT * FROM about_statistik ORDER BY urutan ASC
 ```
 
-Ini artinya Liza perlu koordinasi dengan James dan Elroi — nama kolomnya harus sesuai. Kalau James mengubah nama kolom di tabelnya, `index.php` perlu disesuaikan juga.
+Ini artinya Liza perlu koordinasi dengan James, Elroi, dan Jennifer — nama kolomnya harus sesuai. Jika ada perubahan kolom di tabel-tabel tersebut, `index.php` perlu disesuaikan juga.
 
 **Catatan:** Liza tidak membuat halaman admin — cukup halaman publik saja karena tidak punya tabel yang dikelola sendiri.
 
@@ -614,8 +617,8 @@ mysqli_stmt_execute($stmt);
 **"Bagaimana koneksi database bekerja?"**
 `koneksi.php` memanggil `mysqli_connect()` dengan empat parameter: host, username, password, dan nama database. Hasilnya disimpan ke `$conn`. Variabel `$conn` ini yang dipakai di semua query selanjutnya sebagai "saluran komunikasi" antara PHP dan MySQL.
 
-**"Kenapa tidak ada `mysqli_close()` di setiap file?"**
-Awalnya ada, tapi itu menyebabkan error karena `admin_sidebar.php` juga butuh koneksi yang sama. PHP secara otomatis menutup koneksi database saat script selesai dijalankan, jadi tidak perlu ditutup manual dalam skenario proyek ini.
+**"Bagaimana penggunaan `mysqli_close()` di proyek ini?"**
+Meskipun PHP secara otomatis menutup koneksi database saat script selesai dijalankan, file-file utama seperti `index.php`, `about.php`, `events.php`, dan `testimonials.php` tetap menutup koneksi secara manual menggunakan `mysqli_close($conn)` di akhir logika PHP untuk kerapihan kode dan pengelolaan resource yang baik. Untuk halaman admin, koneksi tidak ditutup secara manual jika halamannya menggunakan `admin_sidebar.php` (yang membutuhkan koneksi tetap terbuka), melainkan dibiarkan ditutup secara otomatis oleh PHP.
 
 **"Apa bedanya `include` dan `include_once`?"**
 `include` menyertakan file setiap kali baris itu dieksekusi. `include_once` memastikan file hanya disertakan sekali meski dipanggil berulang kali. Di `admin_sidebar.php`, `koneksi.php` dipanggil dengan `include_once` untuk mencegah error "sudah terhubung" kalau halaman induknya sudah memanggil `include` terlebih dahulu.

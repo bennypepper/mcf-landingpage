@@ -119,8 +119,8 @@ $semua_events = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $semua_events[] = $row;
 }
-// Catatan: tidak perlu memanggil mysqli_close($conn) secara manual.
-// PHP menutup koneksi otomatis saat script selesai.
+// Catatan: disarankan menutup koneksi database dengan mysqli_close($conn) di akhir script logika halaman utama.
+// Namun, di admin panel yang menggunakan sidebar, biarkan koneksi ditutup secara otomatis oleh PHP agar tidak memutus koneksi sidebar.
 ?>
 
 <!DOCTYPE html>
@@ -1148,12 +1148,12 @@ Benny (laptop)       Elroi (laptop)       James (laptop)
 | **Benny** *(Leader)* | Contact Form + Infrastruktur | `contact.php`, `koneksi.php`, `admin/login.php`, `admin/logout.php`, `admin/dashboard.php`, `admin/pesan_list.php`, `admin/pesan_tandai.php`, `database.sql` | `admin`, `pesan_kontak` |
 | **Elroi** | Testimonials | `testimonials.php`, `admin/testimonial_list.php`, `admin/testimonial_tambah.php`, `admin/testimonial_edit.php`, `admin/testimonial_hapus.php` | `testimonials` |
 | **Jennifer** | About | `about.php`, `admin/about_stat_list.php`, `admin/about_stat_tambah.php`, `admin/about_stat_edit.php`, `admin/about_stat_hapus.php`, `admin/about_tujuan_list.php`, `admin/about_tujuan_tambah.php`, `admin/about_tujuan_edit.php`, `admin/about_tujuan_hapus.php` | `about_statistik`, `about_tujuan` |
-| **Liza** | Home | `index.php` | *(membaca dari `events` & `testimonials` untuk preview)* |
+| **Liza** | Home | `index.php` | *(membaca dari `events`, `testimonials`, dan `about_statistik` untuk preview)* |
 | **James** | Events | `events.php`, `admin/events_list.php`, `admin/events_tambah.php`, `admin/events_edit.php`, `admin/events_hapus.php` | `events` |
 
 > **Catatan untuk Jennifer:** Halaman `about.php` punya **dua tabel** — `about_statistik` (kotak angka: 9+ tahun, 1000+ mahasiswa, dst.) dan `about_tujuan` (kartu tujuan program: Transisi Akademik, Koneksi Kolaboratif, Internalisasi Nilai). Kolom `gambar` di tabel `about_tujuan` menyimpan **path** ke file gambar di folder `assets/`, bukan file gambarnya sendiri.
 
-> **Catatan untuk Liza:** Halaman `index.php` menampilkan *preview* dari tabel `events` dan `testimonials`. Liza perlu koordinasi dengan James dan Elroi untuk memastikan nama kolom di query-nya sesuai. Liza **tidak** perlu membuat tabel baru — cukup baca dari tabel milik James dan Elroi.
+> **Catatan untuk Liza:** Halaman `index.php` menampilkan *preview* dari tabel `events`, `testimonials`, dan `about_statistik`. Liza perlu koordinasi dengan James, Elroi, dan Jennifer untuk memastikan nama kolom di query-nya sesuai. Liza **tidak** perlu membuat tabel baru — cukup baca dari tabel-tabel milik rekan tim lainnya.
 
 ---
 
@@ -1329,9 +1329,10 @@ git push origin main
 
 #### 👤 Liza — Home
 - Ubah `index.html` → `index.php`
-- Ambil 3 event terdekat dari tabel `events` untuk ditampilkan di preview events
+- Ambil 4 event terdekat dari tabel `events` untuk ditampilkan di preview events (1 featured + 3 mini-events)
 - Ambil 1 testimonial terbaru dari tabel `testimonials` untuk ditampilkan di teaser
-- Koordinasi nama kolom dengan James (events) dan Elroi (testimonials)
+- Ambil data statistik dari tabel `about_statistik` untuk ditampilkan di teaser statistik
+- Koordinasi nama kolom dengan James (events), Elroi (testimonials), dan Jennifer (about_statistik)
 
 #### 👤 James — Events
 - Ubah `events.html` → `events.php` (ambil data dari tabel `events`)
