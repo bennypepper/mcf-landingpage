@@ -107,38 +107,39 @@ if (isset($_GET['status'])) {
                   </a>
                 </td>
               </tr>
-
-              <!-- Modal detail pesan -->
-              <div class="modal fade" id="modalPesan<?= $p['id'] ?>" tabindex="-1">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h6 class="modal-title fw-bold">Pesan dari <?= htmlspecialchars($p['nama']) ?></h6>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                      <p class="small text-muted mb-1"><i class="bi bi-envelope me-1"></i><?= htmlspecialchars($p['email']) ?></p>
-                      <?php if (!empty($p['nomor_telepon'])): ?>
-                        <p class="small text-muted mb-3"><i class="bi bi-telephone me-1"></i><?= htmlspecialchars($p['nomor_telepon']) ?></p>
-                      <?php endif; ?>
-                      <hr>
-                      <p style="line-height:1.8;"><?= nl2br(htmlspecialchars($p['pesan'])) ?></p>
-                      <p class="text-muted small mt-3">Dikirim pada: <?= date('d F Y, H:i', strtotime($p['dikirim_pada'])) ?></p>
-                    </div>
-                    <div class="modal-footer">
-                      <?php if ($p['sudah_dibaca'] == 0): ?>
-                        <a href="pesan_tandai.php?id=<?= $p['id'] ?>" class="btn btn-success btn-sm">Tandai Sudah Dibaca</a>
-                      <?php endif; ?>
-                      <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             <?php endforeach; ?>
           </tbody>
         </table>
       </div>
+
+      <!-- Modal-modal detail pesan (diletakkan di luar tabel agar HTML valid dan tidak menghalangi klik button) -->
+      <?php foreach ($pesans as $p): ?>
+        <div class="modal fade" id="modalPesan<?= $p['id'] ?>" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title fw-bold">Pesan dari <?= htmlspecialchars($p['nama']) ?></h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <p class="small text-muted mb-1"><i class="bi bi-envelope me-1"></i><?= htmlspecialchars($p['email']) ?></p>
+                <?php if (!empty($p['nomor_telepon'])): ?>
+                  <p class="small text-muted mb-3"><i class="bi bi-telephone me-1"></i><?= htmlspecialchars($p['nomor_telepon']) ?></p>
+                <?php endif; ?>
+                <hr>
+                <p style="line-height:1.8;"><?= nl2br(htmlspecialchars($p['pesan'])) ?></p>
+                <p class="text-muted small mt-3">Dikirim pada: <?= date('d F Y, H:i', strtotime($p['dikirim_pada'])) ?></p>
+              </div>
+              <div class="modal-footer">
+                <?php if ($p['sudah_dibaca'] == 0): ?>
+                  <a href="pesan_tandai.php?id=<?= $p['id'] ?>" class="btn btn-success btn-sm">Tandai Sudah Dibaca</a>
+                <?php endif; ?>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php endforeach; ?>
 
       <?php if ($total_pages > 1): ?>
       <nav aria-label="Page navigation">
