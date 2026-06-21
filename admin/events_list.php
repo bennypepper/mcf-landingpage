@@ -1,14 +1,30 @@
 <?php
 // ============================================================
-// admin/events_list.php — Daftar semua event (James)
+// Halaman events admin
 // ============================================================
 session_start();
 if (!isset($_SESSION['admin_id'])) { header("Location: login.php"); exit; }
 
 include '../koneksi.php';
 
-// Ambil semua event, diurutkan berdasarkan urutan
-$sql    = "SELECT * FROM events ORDER BY urutan ASC, tanggal ASC";
+// --- KONFIGURASI PAGINATION ---
+$limit = 4; // Mengatur jumlah data per halaman
+$page  = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
+$offset = ($page - 1) * $limit;
+
+// Menghitung total data di tabel events
+$sql_total    = "SELECT COUNT(id) AS total FROM events";
+$result_total = mysqli_query($conn, $sql_total);
+$row_total    = mysqli_fetch_assoc($result_total);
+$total_data   = $row_total['total'];
+
+// Menghitung total halaman
+$total_pages  = ceil($total_data / $limit);
+// ------------------------------
+
+// Ambil event dengan LIMIT dan OFFSET, diurutkan berdasarkan urutan
+$sql    = "SELECT * FROM events ORDER BY urutan ASC, tanggal ASC LIMIT $limit OFFSET $offset";
 $result = mysqli_query($conn, $sql);
 $events = [];
 while ($row = mysqli_fetch_assoc($result)) { $events[] = $row; }
@@ -50,14 +66,20 @@ if (isset($_GET['status'])) {
   <?php endif; ?>
 
   <div class="table-card">
-    <?php if (empty($events)): ?>
+    <?php if ($total_data == 0): ?>
       <div class="text-center py-5 text-muted">
         <i class="bi bi-calendar-x" style="font-size:2.5rem;"></i>
         <p class="mt-2">Belum ada event. <a href="events_tambah.php">Tambah sekarang</a></p>
       </div>
     <?php else: ?>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
+      
+      <div class="mb-3 d-flex justify-content-between align-items-center">
+        <input type="text" id="searchInput" class="form-control w-50" placeholder="Cari di halaman ini..." onkeyup="filterTable()">
+        <span class="text-muted small">Total: <?= $total_data ?> Event</span>
+      </div>
+
+      <div class="table-responsive mb-3">
+        <table class="table table-hover align-middle" id="eventsTable">
           <thead class="table-light">
             <tr>
               <th style="width:50px">#</th>
@@ -72,7 +94,7 @@ if (isset($_GET['status'])) {
           <tbody>
             <?php foreach ($events as $i => $ev): ?>
               <tr>
-                <td class="text-muted small"><?= $i + 1 ?></td>
+                <td class="text-muted small"><?= $offset + $i + 1 ?></td>
                 <td class="fw-semibold"><?= htmlspecialchars($ev['nama_event']) ?></td>
                 <td class="small text-muted"><?= date('d M Y', strtotime($ev['tanggal'])) ?></td>
                 <td class="small text-muted"><?= htmlspecialchars($ev['lokasi'] ?? '-') ?></td>
@@ -96,8 +118,54 @@ if (isset($_GET['status'])) {
           </tbody>
         </table>
       </div>
+
+      <?php if ($total_pages > 1): ?>
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-end">
+          
+          <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+            <a class="page-link" href="?page=<?= $page - 1 ?>">Previous</a>
+          </li>
+
+          <?php for($i = 1; $i <= $total_pages; $i++): ?>
+            <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
+              <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+            </li>
+          <?php endfor; ?>
+
+          <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+            <a class="page-link" href="?page=<?= $page + 1 ?>">Next</a>
+          </li>
+
+        </ul>
+      </nav>
+      <?php endif; ?>
+
     <?php endif; ?>
   </div>
 </div>
+
+<script>
+function filterTable() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("searchInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("eventsTable");
+  tr = table.getElementsByTagName("tr");
+
+  for (i = 1; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[1]; 
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; 
+      } else {
+        tr[i].style.display = "none"; 
+      }
+    }       
+  }
+}
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body></html>
