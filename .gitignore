@@ -1,0 +1,13 @@
+# Private Team Documentation (Grading Rubric guides)
+GUIDE.md
+DOKUMENTASI.md
+PREPARASI_PRESENTASI.md
+
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE Files
+.vscode/
+.idea/
